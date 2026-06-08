@@ -1,0 +1,2949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resolution Center — IAS Accountant Experience (Company Highlight, QBDS DataGrid)</title>
+  <style>
+    /* ─── IAS Design Tokens ─── */
+    :root {
+      --font-family-body: 'Avenir Next', Avenir, 'Century Gothic', Calibri, sans-serif;
+      --font-family-component: 'Avenir Next', Avenir, 'Century Gothic', Calibri, sans-serif;
+
+      --color-brand-primary:        #005056;
+      --color-brand-primary-hover:  #003C42;
+      --color-brand-primary-active: #002A2E;
+
+      --color-text-primary:   #21262A;
+      --color-text-secondary: #859299;
+      --color-text-inverse:   #FFFFFF;
+
+      --color-border-standard: #D5DEE3;
+      --color-border-hover:    #ADBAC2;
+
+      --color-surface-primary:   #FFFFFF;
+      --color-surface-secondary: #F0F4F6;
+      --color-surface-passive:   #E2E9ED;
+
+      --color-focus-content: #205EA3;
+      --color-focus-header:  #5DABFF;
+
+      --color-status-info:        #2B77CC;
+      --color-status-info-bg:     #E0EDFF;
+      --color-status-success:     #0D7C39;
+      --color-status-success-bg:  #EAF3DE;
+      --color-status-warning:     #C27016;
+      --color-status-warning-bg:  #FEF6E6;
+      --color-status-error:       #D63800;
+      --color-status-error-bg:    #FFF5F2;
+      --color-status-pending:     #859299;
+      --color-status-pending-bg:  #F0F4F6;
+      --color-status-decision:    #005056;
+      --color-status-decision-bg: #E0F7FA;
+
+      --radius-small:   4px;
+      --radius-medium:  6px;
+      --radius-large:   8px;
+      --radius-x-large: 12px;
+      --radius-full:    9999px;
+
+      --size-1: 4px;  --size-2: 8px;  --size-3: 12px; --size-4: 16px;
+      --size-5: 20px; --size-6: 24px; --size-7: 28px; --size-8: 32px;
+      --size-ten: 10px;
+
+      --elevation-lifted: 0px 2px 8px rgba(0,0,0,0.12);
+      --elevation-raised: 0px 4px 16px rgba(0,0,0,0.16);
+      --elevation-overlay: 0px 8px 32px rgba(0,0,0,0.20);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-family-body);
+      background: var(--color-surface-secondary);
+      color: var(--color-text-primary);
+      font-size: 14px;
+      line-height: 1.4;
+      min-height: 100vh;
+    }
+
+    /* ─── GLOBAL HEADER ─── */
+    .global-header {
+      position: sticky;
+      top: 0;
+      z-index: 400;
+      height: 56px;
+      background: var(--color-brand-primary);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--size-4);
+      gap: var(--size-4);
+    }
+    .header-logo { display: flex; flex-direction: column; line-height: 1.1; white-space: nowrap; flex-shrink: 0; }
+    .header-logo-top { font-size: 13px; font-weight: 700; color: var(--color-text-inverse); letter-spacing: 0.08em; text-transform: uppercase; }
+    .header-logo-bottom { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.85); letter-spacing: 0.01em; }
+    .header-divider { width: 1px; height: 32px; background: rgba(195,206,213,0.4); flex-shrink: 0; }
+    .header-company-switcher { display: flex; align-items: center; gap: var(--size-1); cursor: pointer; flex-shrink: 0; background: none; border: none; padding: 0; }
+    .header-company-switcher span { font-size: 14px; font-weight: 700; color: var(--color-text-inverse); font-family: var(--font-family-body); }
+    .header-company-switcher svg { color: var(--color-text-inverse); opacity: 0.8; }
+    .header-search { flex: 1; max-width: 460px; margin: 0 auto; position: relative; }
+    .header-search input { width: 100%; height: 34px; background: #003C42; border: 1px solid transparent; border-radius: var(--radius-full); padding: 0 var(--size-4) 0 36px; font-family: var(--font-family-body); font-size: 13px; color: var(--color-text-inverse); outline: none; transition: border-color 0.15s; }
+    .header-search input::placeholder { color: #C3CED5; }
+    .header-search input:focus { border-color: #009EAC; }
+    .header-search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); pointer-events: none; }
+    .header-right { display: flex; align-items: center; gap: 18px; margin-left: auto; flex-shrink: 0; }
+    .header-icon-btn { background: none; border: none; cursor: pointer; color: var(--color-text-inverse); padding: 0; display: flex; align-items: center; opacity: 0.9; }
+    .header-icon-btn:hover { opacity: 1; }
+    .header-avatar { width: 26px; height: 26px; border-radius: 50%; background: #7CBCFF; color: #181C1F; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+
+    /* ─── APP SHELL ─── */
+    .app-shell { display: flex; height: calc(100vh - 56px); overflow: hidden; }
+
+    /* ─── LEFT BAR ─── */
+    .left-bar { width: 74px; flex-shrink: 0; background: var(--color-surface-primary); border-right: 1px solid var(--color-border-standard); display: flex; flex-direction: column; align-items: center; padding: var(--size-2) 0; overflow-y: auto; overflow-x: hidden; }
+    .nav-item { width: 74px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; padding: var(--size-1) 0; }
+    .nav-item:hover .nav-icon-wrap { background: var(--color-brand-primary-hover); }
+    .nav-item:hover .nav-icon-wrap svg { color: var(--color-surface-primary); }
+    .nav-icon-wrap { width: 36px; height: 36px; border-radius: var(--radius-small); display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+    .nav-icon-wrap svg { color: var(--color-text-secondary); transition: color 0.1s; }
+    .nav-item.active .nav-icon-wrap { background: var(--color-brand-primary-active); border-radius: var(--radius-medium); }
+    .nav-item.active .nav-icon-wrap svg { color: var(--color-surface-primary); }
+    .nav-item.active .nav-label { font-weight: 700; }
+    .nav-label { font-size: 11px; font-weight: 500; color: var(--color-text-primary); text-align: center; line-height: 1.2; }
+    .nav-divider { width: 50px; height: 1px; background: var(--color-border-standard); margin: var(--size-2) 0; }
+    .nav-section-label { font-size: 10px; font-weight: 700; color: var(--color-text-primary); text-transform: uppercase; letter-spacing: 0.06em; text-align: center; padding: var(--size-2) 0 var(--size-1); }
+    /* QBDS reference: pinned apps render as a circle outline with a stylized
+       icon inside, not a filled circle with initials. */
+    .nav-pinned-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+    .nav-pinned-icon svg { color: var(--color-text-primary); }
+    .nav-bottom { margin-top: auto; padding-top: var(--size-2); border-top: 1px solid var(--color-border-standard); width: 100%; }
+
+    /* ─── CONTENT AREA ─── */
+    .content-area { flex: 1; overflow-y: auto; padding: 0 var(--size-8) var(--size-8); background: var(--color-surface-secondary); min-width: 0; }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header { display: flex; align-items: center; justify-content: space-between; height: 76px; flex-shrink: 0; }
+    .page-title { font-size: 34px; font-weight: 700; color: var(--color-text-primary); margin: 0; line-height: 1.2; }
+
+    /* ─── TABS ─── */
+    .tabs-bar { display: flex; gap: 0; border-bottom: 1px solid var(--color-border-standard); margin-bottom: var(--size-5); }
+    .tab-item { padding: var(--size-2) var(--size-5); font-size: 16px; font-weight: 500; color: var(--color-text-secondary); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color 0.1s, border-color 0.1s; white-space: nowrap; }
+    .tab-item:hover { color: var(--color-text-primary); }
+    .tab-item.active { color: var(--color-brand-primary); font-weight: 500; border-bottom-color: var(--color-brand-primary); }
+
+    /* ─── STATUS CARDS (clickable filter tiles) ─── */
+    .scope-hint { display: inline-flex; align-items: center; gap: var(--size-2); padding: var(--size-2) var(--size-3); margin-bottom: var(--size-3); border-radius: var(--radius-large); background: var(--color-surface-secondary); color: var(--color-text-primary); font-size: 13px; font-family: var(--font-family-body); }
+    .scope-hint-icon { color: var(--color-brand-primary); flex-shrink: 0; }
+    .status-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--size-4); margin-bottom: var(--size-5); }
+    .status-card {
+      background: var(--color-surface-primary);
+      border-radius: var(--radius-x-large);
+      padding: var(--size-4) var(--size-5);
+      border: 1px solid var(--color-border-standard);
+      position: relative;
+      user-select: none;
+      text-align: left;
+      font-family: var(--font-family-body);
+      width: 100%;
+    }
+    .status-card-icon { position: absolute; top: var(--size-4); right: var(--size-4); }
+    .status-card-count { font-size: 36px; font-weight: 700; line-height: 1.1; margin-bottom: var(--size-1); }
+    .status-card-title { font-size: 14px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 2px; display: inline-flex; align-items: center; gap: 6px; }
+    .status-card-title-icon { display: inline-flex; align-items: center; }
+    .status-card-desc { font-size: 12px; font-weight: 400; color: var(--color-text-secondary); }
+    .status-card.attention { border-top: 3px solid var(--color-status-error); }
+    .status-card.attention .status-card-count { color: var(--color-status-error); }
+    .status-card.waiting-client { border-top: 3px solid #2B77CC; }
+    .status-card.waiting-client .status-card-count { color: #2B77CC; }
+    .status-card.under-review { border-top: 3px solid var(--color-status-warning); }
+    .status-card.under-review .status-card-count { color: var(--color-status-warning); }
+    .status-card.closed { border-top: 3px solid var(--color-status-success); }
+    .status-card.closed .status-card-count { color: var(--color-status-success); }
+
+    /* ─── CASE QUEUE PANEL ─── */
+    .case-queue-panel { background: var(--color-surface-primary); border-radius: var(--radius-x-large); border: 1px solid var(--color-border-standard); overflow: hidden; }
+
+    /* ─── FILTER BAR ─── */
+    .filter-bar { display: flex; align-items: center; justify-content: space-between; padding: var(--size-3) var(--size-5); border-bottom: 1px solid var(--color-border-standard); gap: var(--size-3); flex-wrap: wrap; }
+    .filter-bar-left { display: flex; align-items: center; gap: var(--size-2); flex-shrink: 0; }
+    .filter-bar-middle { display: flex; align-items: center; gap: var(--size-2); flex: 1 1 auto; min-width: 0; justify-content: center; flex-wrap: wrap; }
+    .filter-bar-middle .fb-input { width: 200px; }
+    .filter-bar-middle .fb-status { width: 180px; }
+    .filter-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; }
+    .accounts-dropdown-btn { display: flex; align-items: center; gap: var(--size-1); height: 36px; padding: 0 var(--size-3) 0 var(--size-4); border: 1px solid var(--color-border-standard); border-radius: var(--radius-large); background: var(--color-surface-primary); font-family: var(--font-family-body); font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; white-space: nowrap; transition: border-color 0.15s; }
+    .accounts-dropdown-btn:hover { border-color: var(--color-border-hover); }
+    .accounts-dropdown-btn .search-icon-sm { color: var(--color-text-secondary); margin-right: 2px; }
+    .filter-bar-right { display: flex; align-items: center; gap: var(--size-2); }
+    .sort-label { font-size: 14px; color: var(--color-text-secondary); white-space: nowrap; }
+    .sort-dropdown-wrap { position: relative; }
+    .sort-select-btn { display: flex; align-items: center; gap: var(--size-1); height: 36px; padding: 0 var(--size-3); border: 1px solid var(--color-border-standard); border-radius: var(--radius-large); background: var(--color-surface-primary); font-family: var(--font-family-body); font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: border-color 0.15s; }
+    .sort-select-btn:hover { border-color: var(--color-border-hover); }
+    .sort-dir-icon { color: var(--color-brand-primary); display: flex; align-items: center; }
+    .sort-dropdown-menu { position: absolute; top: calc(100% + var(--size-1)); right: 0; background: var(--color-surface-primary); border: 1px solid var(--color-border-hover); border-radius: var(--radius-large); box-shadow: var(--elevation-raised); z-index: 300; min-width: 168px; overflow: hidden; }
+    .sort-option { display: flex; align-items: center; gap: var(--size-2); padding: var(--size-2) var(--size-3); font-size: 14px; cursor: pointer; transition: background 0.08s; color: var(--color-text-primary); }
+    .sort-option:hover { background: var(--color-surface-secondary); }
+    .sort-option.selected { font-weight: 700; color: var(--color-brand-primary); }
+    .sort-check { display: flex; align-items: center; width: 16px; flex-shrink: 0; }
+
+    /* ─── TABLE HEADER ─── */
+    /* Columns: Client | Product | Case | Status | Submitted by | Date opened | Last updated | Days out | Actions */
+    .table-header { display: grid; grid-template-columns: 1.1fr 0.9fr 1.7fr 1fr 1fr 0.9fr 0.9fr 0.7fr 1.3fr; padding: var(--size-2) var(--size-5); border-bottom: 1px solid var(--color-border-standard); gap: var(--size-3); }
+    .col-header { font-size: 11px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; }
+    /* Sortable column header — interactive */
+    .col-header.sortable { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; background: none; border: none; padding: 0; color: var(--color-text-secondary); font: inherit; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .col-header.sortable:hover { color: var(--color-text-primary); }
+    .col-header.sortable.active { color: var(--color-brand-primary); }
+    .col-header-sort-icon { display: inline-flex; align-items: center; opacity: 0.6; }
+    .col-header.sortable.active .col-header-sort-icon { opacity: 1; }
+
+    /* ─── INLINE FILTER INPUTS ROW (column-aligned) ─── */
+    .filter-inputs-row { display: grid; grid-template-columns: 1.1fr 0.9fr 1.7fr 1fr 1fr 0.9fr 0.9fr 0.7fr 1.3fr; padding: var(--size-2) var(--size-5) var(--size-3); border-bottom: 1px solid var(--color-border-standard); gap: var(--size-3); align-items: center; background: var(--color-surface-secondary); }
+    .filter-input-wrap { position: relative; }
+    .filter-input-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); pointer-events: none; display: flex; align-items: center; }
+    .filter-input { width: 100%; height: 36px; border: 1px solid var(--color-border-standard); border-radius: var(--radius-large); padding: 0 var(--size-3) 0 32px; font-family: var(--font-family-body); font-size: 13px; color: var(--color-text-primary); background: var(--color-surface-primary); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+    .filter-input::placeholder { color: var(--color-text-secondary); }
+    .filter-input:focus { border-color: var(--color-focus-content); box-shadow: 0 0 0 2px rgba(32,94,163,0.15); }
+    .typeahead-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--color-surface-primary); border: 1px solid var(--color-border-hover); border-radius: var(--radius-large); box-shadow: var(--elevation-raised); z-index: 200; overflow: hidden; max-height: 240px; overflow-y: auto; }
+    .typeahead-item { padding: var(--size-2) var(--size-3); font-size: 13px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; transition: background 0.08s; }
+    .typeahead-item:hover { background: var(--color-surface-secondary); }
+    .typeahead-item-main { font-weight: 600; color: var(--color-text-primary); }
+    .typeahead-item-sub  { font-size: 11px; color: var(--color-text-secondary); }
+    .typeahead-highlight { color: var(--color-brand-primary); }
+    .typeahead-empty { padding: var(--size-3); font-size: 13px; color: var(--color-text-secondary); text-align: center; }
+    .status-filter-wrap { position: relative; }
+    .status-filter-select { width: 100%; height: 36px; border: 1px solid var(--color-border-standard); border-radius: var(--radius-large); padding: 0 32px 0 var(--size-3); font-family: var(--font-family-body); font-size: 13px; color: var(--color-text-primary); background: var(--color-surface-primary); outline: none; appearance: none; -webkit-appearance: none; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .status-filter-select:focus { border-color: var(--color-focus-content); box-shadow: 0 0 0 2px rgba(32,94,163,0.15); }
+    .status-filter-chevron { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--color-text-secondary); display: flex; align-items: center; }
+
+    /* ─── CASE ROWS ─── */
+    .case-row { display: grid; grid-template-columns: 1.1fr 0.9fr 1.7fr 1fr 1fr 0.9fr 0.9fr 0.7fr 1.3fr; padding: var(--size-3) var(--size-5); border-bottom: 1px solid var(--color-border-standard); gap: var(--size-3); align-items: center; transition: background 0.1s; }
+    .case-row:last-child { border-bottom: none; }
+    .case-row:hover { background: var(--color-surface-secondary); }
+    .case-title  { font-size: 14px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 2px; line-height: 1.3; }
+    .case-number { font-size: 12px; font-weight: 400; color: var(--color-text-secondary); }
+    .submitter-cell { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+    .submitter-name { font-size: 13px; color: var(--color-text-primary); }
+    .origin-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: var(--radius-full); letter-spacing: 0.02em; text-transform: uppercase; line-height: 1.2; }
+    .origin-badge.origin-firm   { background: #E0EDFF; color: #0A4C8F; }
+    .origin-badge.origin-client { background: #EAF3DE; color: #0D7C39; }
+    /* Client cell — plain text, no hyperlink affordance (was teal/underline). */
+    .client-cell { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+    .client-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+    .client-id   { font-size: 11px; font-weight: 400; color: var(--color-text-secondary); line-height: 1.2; }
+    .status-badge { display: inline-flex; align-items: center; padding: 3px var(--size-2); border-radius: var(--radius-full); font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .status-badge.needs-attention  { background: var(--color-status-error-bg);    color: var(--color-status-error); }
+    .status-badge.waiting-client   { background: #E0EDFF;                         color: #0A4C8F; }
+    .status-badge.under-review     { background: var(--color-status-warning-bg);  color: var(--color-status-warning); }
+    .status-badge.decision-reached { background: var(--color-status-decision-bg); color: var(--color-status-decision); }
+    .last-updated-cell, .date-opened-cell { font-size: 13px; color: var(--color-text-primary); display: flex; flex-direction: column; gap: 2px; }
+    .date-time-sub { font-size: 11px; color: var(--color-text-secondary); }
+    .product-cell { display: flex; align-items: center; }
+    .product-chip {
+      display: inline-flex; align-items: center;
+      padding: 3px var(--size-2);
+      border-radius: var(--radius-large);
+      background: var(--color-surface-secondary);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border-standard);
+      font-size: 12px; font-weight: 600;
+      white-space: nowrap;
+    }
+    .days-out-cell { display: flex; align-items: center; }
+    .days-out-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px var(--size-2);
+      border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 700;
+      background: var(--color-surface-passive);
+      color: var(--color-text-primary);
+      white-space: nowrap;
+    }
+    .days-out-chip.warn { background: var(--color-status-warning-bg); color: var(--color-status-warning); }
+    .days-out-chip.urgent { background: var(--color-status-error-bg); color: var(--color-status-error); }
+    .actions-cell { display: flex; align-items: center; }
+    .actions-cell .btn { font-weight: 400; }
+
+    /* Split-button pattern: primary action button + dropdown trigger flush
+       beside it. Mirrors IDS DataGrid's "Link Action Button + chevron" pattern
+       (primary action prominent, additional actions tucked into the dropdown). */
+    .action-split {
+      display: inline-flex;
+      align-items: stretch;
+      border: 1px solid var(--color-border-standard);
+      border-radius: var(--radius-small);
+      overflow: hidden;
+      background: var(--color-surface-primary);
+    }
+    .action-split-primary {
+      height: 28px;
+      padding: 0 var(--size-3);
+      background: none;
+      border: none;
+      border-right: 1px solid var(--color-border-standard);
+      font-family: var(--font-family-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-brand-primary);
+      cursor: pointer;
+      transition: background 0.1s;
+      white-space: nowrap;
+    }
+    .action-split-primary:hover { background: var(--color-surface-secondary); }
+    .action-split-trigger {
+      height: 28px;
+      width: 28px;
+      padding: 0;
+      background: none;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-brand-primary);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .action-split-trigger:hover { background: var(--color-surface-secondary); }
+    .action-split-trigger[aria-expanded="true"] { background: var(--color-surface-passive); }
+
+    .action-menu {
+      position: absolute;
+      right: var(--size-5);
+      margin-top: 2px;
+      min-width: 180px;
+      background: var(--color-surface-primary);
+      border: 1px solid var(--color-border-hover);
+      border-radius: var(--radius-large);
+      box-shadow: var(--elevation-raised);
+      z-index: 250;
+      padding: 4px 0;
+    }
+    .action-menu[hidden] { display: none; }
+    .action-menu-item {
+      display: block;
+      width: 100%;
+      padding: var(--size-2) var(--size-3);
+      background: none;
+      border: none;
+      text-align: left;
+      font-family: var(--font-family-body);
+      font-size: 13px;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: background 0.08s;
+    }
+    .action-menu-item:hover { background: var(--color-surface-secondary); }
+    .action-menu-item:disabled { color: var(--color-text-secondary); cursor: not-allowed; }
+    .action-menu-item:disabled:hover { background: none; }
+
+    /* The case row needs to be the positioning context for the menu's absolute placement */
+    .case-row { position: relative; }
+
+    /* ─── BUTTONS ─── */
+    .btn { height: 32px; padding: 0 var(--size-3); border-radius: var(--radius-small); font-family: var(--font-family-body); font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: background 0.12s, color 0.12s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-primary { background: var(--color-brand-primary); color: var(--color-text-inverse); }
+    .btn-primary:hover { background: var(--color-brand-primary-hover); }
+    .btn-ghost { background: none; color: var(--color-brand-primary); border: 1px solid var(--color-border-standard); }
+    .btn-ghost:hover { background: var(--color-surface-secondary); }
+    .btn-secondary { background: none; color: var(--color-brand-primary); border: 1px solid var(--color-brand-primary); }
+    .btn-secondary:hover { background: rgba(0,80,86,0.06); }
+    .btn-danger-ghost { background: none; color: var(--color-status-error); border: 1px solid var(--color-border-standard); }
+    .btn-danger-ghost:hover { background: var(--color-status-error-bg); }
+
+    /* ─── TABLE FOOTER ─── */
+    .table-footer { display: flex; align-items: center; justify-content: space-between; padding: var(--size-3) var(--size-5); border-top: 1px solid var(--color-border-standard); gap: var(--size-4); flex-wrap: wrap; }
+    .table-footer-text { font-size: 13px; color: var(--color-text-secondary); }
+
+    /* ─── IDS Pagination ─── */
+    .ids-pagination { display: flex; align-items: center; gap: var(--size-5); font-family: var(--font-family-body); color: var(--color-text-primary); }
+    .ids-pagination-rpp { display: flex; align-items: center; gap: var(--size-2); font-size: 13px; color: var(--color-text-primary); }
+    .ids-pagination-rpp-label { white-space: nowrap; }
+    .ids-pagination-select-wrap { position: relative; display: inline-flex; align-items: center; }
+    .ids-pagination-select { appearance: none; -webkit-appearance: none; height: 32px; padding: 0 28px 0 var(--size-3); border: 1px solid var(--color-border-standard); border-radius: var(--radius-small); background: var(--color-surface-primary); font-family: var(--font-family-body); font-size: 13px; color: var(--color-text-primary); cursor: pointer; outline: none; transition: border-color 0.12s, box-shadow 0.12s; }
+    .ids-pagination-select:hover { border-color: var(--color-border-hover); }
+    .ids-pagination-select:focus-visible { border-color: var(--color-brand-primary); box-shadow: 0 0 0 2px rgba(0,80,86,0.2); }
+    .ids-pagination-select-caret { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-secondary); pointer-events: none; }
+    .ids-pagination-range { font-size: 13px; color: var(--color-text-primary); white-space: nowrap; }
+    .ids-pagination-controls { display: inline-flex; align-items: center; gap: 2px; }
+    .ids-pagination-btn { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; border-radius: var(--radius-small); color: var(--color-text-primary); cursor: pointer; transition: background 0.12s, color 0.12s, border-color 0.12s; }
+    .ids-pagination-btn:hover:not(:disabled) { background: var(--color-surface-secondary); border-color: var(--color-border-standard); }
+    .ids-pagination-btn:focus-visible { outline: none; border-color: var(--color-brand-primary); box-shadow: 0 0 0 2px rgba(0,80,86,0.2); }
+    .ids-pagination-btn:disabled { color: var(--color-border-hover); cursor: not-allowed; }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state { padding: var(--size-8) var(--size-5); text-align: center; }
+    .empty-state-icon { font-size: 32px; margin-bottom: var(--size-3); opacity: 0.35; }
+    .empty-state-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--size-1); }
+    .empty-state-desc { font-size: 13px; color: var(--color-text-secondary); }
+
+    /* ─── ADD INFORMATION INLINE PANEL ─── */
+    .add-info-row {
+      display: none;
+      padding: var(--size-4) var(--size-5);
+      background: var(--color-surface-secondary);
+      border-bottom: 1px solid var(--color-border-standard);
+      gap: var(--size-3);
+      flex-direction: column;
+    }
+    .add-info-row.open { display: flex; }
+    .add-info-label { font-size: 13px; font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--size-1); }
+    .add-info-sublabel { font-size: 12px; color: var(--color-text-secondary); margin-bottom: var(--size-2); }
+    .add-info-textarea {
+      width: 100%;
+      min-height: 96px;
+      border: 1px solid var(--color-border-standard);
+      border-radius: var(--radius-large);
+      padding: var(--size-3);
+      font-family: var(--font-family-body);
+      font-size: 14px;
+      color: var(--color-text-primary);
+      background: var(--color-surface-primary);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      line-height: 1.5;
+    }
+    .add-info-textarea::placeholder { color: var(--color-text-secondary); }
+    .add-info-textarea:focus { border-color: var(--color-focus-content); box-shadow: 0 0 0 2px rgba(32,94,163,0.15); }
+    .add-info-actions { display: flex; gap: var(--size-2); justify-content: flex-end; }
+    .add-info-char-count { font-size: 11px; color: var(--color-text-secondary); align-self: flex-end; margin-top: -6px; }
+
+    /* ─── CASE DETAILS OVERLAY ─── */
+    .overlay-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(33,38,42,0.45);
+      z-index: 500;
+      display: none;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+    .overlay-backdrop.open { display: flex; }
+
+    .case-details-panel {
+      width: 680px;
+      max-width: 100vw;
+      height: 100vh;
+      background: var(--color-surface-primary);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--elevation-overlay);
+      overflow: hidden;
+      animation: slideIn 0.22s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes slideIn {
+      from { transform: translateX(48px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+
+    .details-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--size-4) var(--size-5);
+      border-bottom: 1px solid var(--color-border-standard);
+      flex-shrink: 0;
+      background: var(--color-surface-primary);
+    }
+    .details-back-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--size-1);
+      background: none;
+      border: none;
+      font-family: var(--font-family-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-brand-primary);
+      cursor: pointer;
+      padding: 0;
+    }
+    .details-back-btn:hover { text-decoration: underline; }
+    .details-close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      padding: var(--size-1);
+      border-radius: var(--radius-small);
+      display: flex;
+      align-items: center;
+      transition: background 0.1s;
+    }
+    .details-close-btn:hover { background: var(--color-surface-passive); color: var(--color-text-primary); }
+
+    .details-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--size-6) var(--size-5);
+      position: relative;
+    }
+
+    /* Case details content — matching screenshot */
+    .details-case-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      text-align: center;
+      margin-bottom: var(--size-3);
+      line-height: 1.25;
+    }
+    .details-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--size-1);
+      margin-bottom: var(--size-5);
+    }
+    .details-case-number {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+    .details-case-number strong { color: var(--color-text-primary); font-weight: 700; }
+    .details-status-row {
+      display: flex;
+      align-items: center;
+      gap: var(--size-2);
+      font-size: 13px;
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .details-status-icon { display: flex; align-items: center; }
+    .details-updated { font-size: 12px; color: var(--color-text-secondary); }
+    .details-expert-note { font-size: 12px; color: var(--color-text-secondary); }
+
+    .details-actions {
+      display: flex;
+      gap: var(--size-3);
+      justify-content: center;
+      margin-bottom: var(--size-6);
+    }
+    .details-actions .btn { height: 36px; padding: 0 var(--size-5); font-size: 14px; }
+
+    /* Divider with label */
+    .details-section-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--size-3);
+      margin-bottom: var(--size-4);
+    }
+    .details-section-divider-line { flex: 1; height: 1px; background: var(--color-border-standard); }
+    .details-section-divider-label { font-size: 13px; font-weight: 700; color: var(--color-text-primary); white-space: nowrap; }
+
+    /* Email thread tabs */
+    .email-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--color-border-standard); margin-bottom: var(--size-4); }
+    .email-tab { padding: var(--size-2) var(--size-4); font-size: 13px; font-weight: 500; color: var(--color-text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.1s, border-color 0.1s; white-space: nowrap; }
+    .email-tab:hover { color: var(--color-text-primary); }
+    .email-tab.active { color: var(--color-brand-primary); font-weight: 700; border-bottom-color: var(--color-brand-primary); }
+
+    /* Email messages */
+    .email-message {
+      border: 1px solid var(--color-border-standard);
+      border-radius: var(--radius-x-large);
+      overflow: hidden;
+      margin-bottom: var(--size-4);
+    }
+    .email-message-header {
+      padding: var(--size-3) var(--size-4);
+      border-bottom: 1px solid var(--color-border-standard);
+      background: var(--color-surface-secondary);
+    }
+    .email-thread-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-secondary); margin-bottom: 3px; }
+    .email-inbox-label { font-size: 13px; font-weight: 700; color: var(--color-text-primary); }
+    .email-all-label { font-size: 12px; color: var(--color-text-secondary); }
+    .email-item {
+      padding: var(--size-4);
+      border-bottom: 1px solid var(--color-border-standard);
+    }
+    .email-item:last-child { border-bottom: none; }
+    .email-item-sender { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 2px; }
+    .email-item-sender strong { color: var(--color-text-primary); font-weight: 600; }
+    .email-item-date { font-size: 11px; color: var(--color-text-secondary); margin-bottom: var(--size-2); }
+    .email-item-subject { font-size: 13px; font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--size-2); }
+    .email-item-greeting { font-size: 13px; color: var(--color-text-primary); margin-bottom: var(--size-2); font-weight: 500; }
+    .email-item-body { font-size: 13px; color: var(--color-text-primary); line-height: 1.55; margin-bottom: var(--size-3); }
+    .email-item-signature { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+    .email-expand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--size-2) var(--size-4);
+      cursor: pointer;
+      background: var(--color-surface-primary);
+      border-bottom: 1px solid var(--color-border-standard);
+      font-size: 13px;
+      color: var(--color-brand-primary);
+      font-weight: 500;
+      transition: background 0.1s;
+    }
+    .email-expand-row:hover { background: var(--color-surface-secondary); }
+    .email-expand-row:last-child { border-bottom: none; }
+
+    /* Details inline add-info */
+    .details-add-info-section {
+      display: none;
+      flex-direction: column;
+      gap: var(--size-3);
+      margin-bottom: var(--size-5);
+      padding: var(--size-4);
+      background: var(--color-surface-secondary);
+      border-radius: var(--radius-x-large);
+      border: 1px solid var(--color-border-standard);
+    }
+    .details-add-info-section.open { display: flex; }
+
+    /* Pagination row */
+    .email-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--size-3) var(--size-4);
+      border-top: 1px solid var(--color-border-standard);
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+    .pagination-btns { display: flex; align-items: center; gap: var(--size-2); }
+    .pagination-btn { background: none; border: 1px solid var(--color-border-standard); border-radius: var(--radius-small); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-primary); font-family: var(--font-family-body); font-size: 13px; font-weight: 600; transition: background 0.1s; }
+    .pagination-btn:hover { background: var(--color-surface-secondary); }
+    .pagination-btn.active { background: var(--color-brand-primary); color: var(--color-text-inverse); border-color: var(--color-brand-primary); }
+    .pagination-nav { background: none; border: 1px solid var(--color-border-standard); border-radius: var(--radius-small); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--color-text-secondary); transition: background 0.1s; }
+    .pagination-nav:hover { background: var(--color-surface-secondary); }
+
+    /* ─── REOPEN REASON PANEL ─── */
+    .reopen-reason-row {
+      display: none;
+      padding: var(--size-4) var(--size-5);
+      background: var(--color-surface-secondary);
+      border-bottom: 1px solid var(--color-border-standard);
+      gap: var(--size-3);
+      flex-direction: column;
+    }
+    .reopen-reason-row.open { display: flex; }
+
+    /* Details panel reopen reason section */
+    .details-reopen-section {
+      display: none;
+      flex-direction: column;
+      gap: var(--size-3);
+      margin-bottom: var(--size-5);
+      padding: var(--size-4);
+      background: var(--color-surface-secondary);
+      border-radius: var(--radius-x-large);
+      border: 1px solid var(--color-border-standard);
+    }
+    .details-reopen-section.open { display: flex; }
+
+    /* Expanded email full-screen overlay inside details panel */
+    .email-expanded-view {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--color-surface-primary);
+      z-index: 10;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .email-expanded-view.open { display: flex; }
+    .email-expanded-header {
+      display: flex;
+      align-items: center;
+      gap: var(--size-3);
+      padding: var(--size-4) var(--size-5);
+      border-bottom: 1px solid var(--color-border-standard);
+      flex-shrink: 0;
+      background: var(--color-surface-primary);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .email-expanded-back {
+      display: flex;
+      align-items: center;
+      gap: var(--size-1);
+      background: none;
+      border: none;
+      font-family: var(--font-family-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-brand-primary);
+      cursor: pointer;
+      padding: 0;
+    }
+    .email-expanded-back:hover { text-decoration: underline; }
+    .email-expanded-subject {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .email-expanded-body {
+      padding: var(--size-6) var(--size-5);
+      flex: 1;
+    }
+
+    /* Accounts dropdown */
+    .accounts-dd-wrap { position: relative; }
+    .accounts-dd-menu { position: absolute; top: calc(100% + var(--size-1)); left: 0; background: var(--color-surface-primary); border: 1px solid var(--color-border-hover); border-radius: var(--radius-large); box-shadow: var(--elevation-raised); z-index: 300; min-width: 200px; overflow: hidden; }
+
+    /* ─── SUCCESS TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: var(--size-6);
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--color-brand-primary-active);
+      color: var(--color-text-inverse);
+      padding: var(--size-3) var(--size-5);
+      border-radius: var(--radius-large);
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: var(--elevation-raised);
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--size-2);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .toast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* ─── Accounts dropdown — wider menu with definitions ─── */
+    .accounts-dd-menu.wide { min-width: 340px; padding: var(--size-1) 0; }
+    .accounts-option {
+      display: flex; align-items: flex-start; gap: var(--size-2);
+      padding: var(--size-2) var(--size-3);
+      cursor: pointer;
+      transition: background 0.08s;
+    }
+    .accounts-option:hover { background: var(--color-surface-secondary); }
+    .accounts-option.selected .accounts-option-title { font-weight: 700; color: var(--color-brand-primary); }
+    .accounts-option-check { display: flex; align-items: center; width: 16px; flex-shrink: 0; padding-top: 3px; }
+    .accounts-option-body { display: flex; flex-direction: column; gap: 2px; }
+    .accounts-option-title { font-size: 14px; color: var(--color-text-primary); }
+    .accounts-option-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1300px) {
+      .status-cards { grid-template-columns: repeat(2, 1fr); }
+      .content-area { padding: 0 var(--size-4) var(--size-4); }
+      .case-details-panel { width: 100vw; }
+    }
+    @media (max-width: 1100px) {
+      .table-header, .filter-inputs-row, .case-row { grid-template-columns: 1.1fr 0.9fr 1.7fr 1fr 0.9fr 0.7fr 1.3fr; }
+      /* Hide "Submitted by" (5th original) and "Last updated" (7th original) */
+      .table-header > *:nth-child(5),
+      .table-header > *:nth-child(7),
+      .filter-inputs-row > *:nth-child(5),
+      .filter-inputs-row > *:nth-child(7),
+      .case-row > *:nth-child(5),
+      .case-row > *:nth-child(7) { display: none; }
+    }
+    @media (max-width: 800px) {
+      .table-header, .filter-inputs-row, .case-row { grid-template-columns: 1.2fr 1.5fr 1fr 1.3fr; }
+      .table-header > *:nth-child(2),
+      .filter-inputs-row > *:nth-child(2),
+      .case-row > *:nth-child(2) { display: none; }
+      .table-header > *:nth-child(n+6),
+      .filter-inputs-row > *:nth-child(n+6),
+      .case-row > *:nth-child(n+6) { display: none; }
+      .table-header > *:last-child,
+      .case-row > *:last-child { display: block; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--color-border-hover); border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+    /* ════════════════════════════════════════════════════════════════════
+       QBDS DataGrid override layer (company-highlight visual treatment)
+       ════════════════════════════════════════════════════════════════════
+       This layer overrides the prototype's case-queue styling to faithfully
+       replicate the @qbds/data-grid component's default visual treatment:
+         - Plain white rows (no zebra striping by default — that's an opt-in
+           setting in QBDS, not the default state per the DataGrid docs)
+         - 'Comfortable' density rows (slightly tighter than the IDS version)
+         - Bold dark column headers with a single hairline divider beneath
+         - Sortable header indicator (small up/down arrows next to text)
+         - Filter Popover + Filter Chips pattern above the grid (canonical
+           QBDS DataGrid filtering pattern, per the documented sub-systems)
+         - Row action: LinkActionButton (link text) + DropDownButton (chevron)
+           — the two documented action-cell column types in QBDS DataGrid
+         - QBDS semantic tokens used throughout
+       Interaction is intentionally disabled — visual asset only.
+       ──────────────────────────────────────────────────────────────────── */
+
+    /* QBDS semantic token polyfills mapped from prototype's existing values.
+       Real engineering implementation would import these via @qbds tokens
+       distributed CSS; here we re-declare them inline so the highlight is
+       self-contained for screenshots. */
+    :root {
+      --qbds-color-container-background-primary: #FFFFFF;
+      --qbds-color-container-background-secondary: #F4F5F8;
+      --qbds-color-container-border-primary: #D5DEE3;
+      --qbds-color-divider-secondary: #E2E9ED;
+      --qbds-color-text-primary: #21262A;
+      --qbds-color-text-secondary: #6B6C72;
+      --qbds-color-link-text: #2B77CC;          /* QBDS link color (Intuit Cobalt) */
+      --qbds-color-link-text-hover: #1E5BA3;
+      --qbds-color-ui-attention: #C27016;       /* warning */
+      --qbds-color-ui-negative: #D63800;        /* error */
+      --qbds-color-ui-info: #2B77CC;            /* info */
+      --qbds-color-ui-positive: #0D7C39;        /* success */
+      --qbds-color-ui-neutral: #6B6C72;         /* pending */
+      --qbds-color-action-passive: #F0F4F6;     /* chip default bg */
+    }
+
+    /* Page content background — white (per QBDS highlight request) */
+    .content-area { background: var(--qbds-color-container-background-primary) !important; }
+    body { background: var(--qbds-color-container-background-primary) !important; }
+
+    /* Page title — Medium weight, not Bold (per QBDS highlight request) */
+    .page-title { font-weight: 500 !important; }
+
+    /* Status tiles — remove color-coding from the structural elements.
+       The big count number is standard text-primary, and the top border
+       is neutralized to match the rest of the card. The tile TITLE picks up
+       its semantic color (e.g. "Needs attention" in red, "Closed" in green)
+       so the semantic meaning travels with the text + the corner icon. */
+    .status-card.attention,
+    .status-card.waiting-client,
+    .status-card.under-review,
+    .status-card.closed {
+      border-top: 1px solid var(--qbds-color-container-border-primary) !important;
+    }
+    .status-card.attention .status-card-count,
+    .status-card.waiting-client .status-card-count,
+    .status-card.under-review .status-card-count,
+    .status-card.closed .status-card-count {
+      color: var(--qbds-color-text-primary) !important;
+    }
+    /* Per-tile title colors — match the semantic status */
+    .status-card.attention      .status-card-title { color: var(--qbds-color-ui-negative) !important; }
+    .status-card.waiting-client .status-card-title { color: var(--qbds-color-ui-info) !important; }
+    .status-card.under-review   .status-card-title { color: var(--qbds-color-ui-attention) !important; }
+    .status-card.closed         .status-card-title { color: var(--qbds-color-ui-positive) !important; }
+
+    /* Panel chrome — QBDS DataGrid container has no outer border in this highlight
+       (per request: remove the bordering of the entire support case queue panel) */
+    .case-queue-panel {
+      border-radius: 0 !important;
+      border: none !important;
+      background: var(--qbds-color-container-background-primary);
+    }
+
+    /* Hide the original column-aligned filter inputs row and original filter bar — replaced by Filter button + chips above the grid */
+    .filter-bar { display: none !important; }
+    .filter-inputs-row { display: none !important; }
+
+    /* QBDS DataGrid toolbar — multi-section, matching real QBDS DataGrid screenshot
+       Left: labeled filter dropdowns (Date range, Transaction type, etc.)
+       Center: "Filters" and "Search" text-link triggers
+       Right: icon actions (refresh, share, copy, print) + Customize text-link */
+    .dg-toolbar {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--qbds-color-divider-secondary);
+      background: var(--qbds-color-container-background-primary);
+      flex-wrap: wrap;
+    }
+    .dg-toolbar-left { display: flex; align-items: flex-end; gap: 16px; flex: 1 1 auto; flex-wrap: wrap; }
+    /* Right-side cluster: icons row, then Customize beneath them — mirrors
+       the QBDS reference where Customize wraps below the icon group on narrow widths */
+    .dg-toolbar-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      align-self: flex-end;
+    }
+
+    /* QBDS toolbar filter dropdown — labeled, full input style */
+    .qbds-filter-field {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .qbds-filter-label {
+      font-size: 12px;
+      color: var(--qbds-color-text-primary);
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .qbds-filter-input {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      height: 36px;
+      width: 150px;
+      padding: 0 10px;
+      border: 1px solid var(--qbds-color-container-border-primary);
+      border-radius: 4px;
+      background: var(--qbds-color-container-background-primary);
+      font-family: var(--font-family-body);
+      font-size: 13px;
+      color: var(--qbds-color-text-primary);
+      cursor: default;
+    }
+    .qbds-filter-input span { color: var(--qbds-color-text-primary); }
+    .qbds-filter-input svg { color: var(--qbds-color-text-secondary); flex-shrink: 0; }
+
+    /* "Filters" and "Search" text-link triggers — dark text + leading icon */
+    .qbds-text-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 4px;
+      background: none;
+      border: none;
+      font-family: var(--font-family-body);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--qbds-color-text-primary);
+      cursor: default;
+      white-space: nowrap;
+    }
+    .qbds-text-link svg { color: var(--qbds-color-text-primary); }
+
+    /* Right-side toolbar icon buttons */
+    .qbds-toolbar-icon {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--qbds-color-text-primary);
+      cursor: default;
+    }
+    .qbds-toolbar-icons-group { display: inline-flex; gap: 8px; align-items: center; }
+
+    /* Accounts dropdown sits in the toolbar in this layout — keep it visible */
+    .dg-toolbar .accounts-dropdown-btn { height: 32px; }
+
+    /* Search affordance — small, leading-icon search field per DataGrid spec */
+    .dg-search {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .dg-search input {
+      height: 32px;
+      width: 240px;
+      padding: 0 var(--size-3) 0 32px;
+      border: 1px solid var(--color-border-standard);
+      border-radius: var(--radius-small);
+      background: var(--color-surface-primary);
+      font-family: var(--font-family-body);
+      font-size: 13px;
+      color: var(--color-text-primary);
+      outline: none;
+    }
+    .dg-search input::placeholder { color: var(--color-text-secondary); }
+    .dg-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-secondary);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Customize / Settings icon button (right side of toolbar) */
+    .dg-icon-btn {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid transparent;
+      border-radius: var(--radius-small);
+      color: var(--color-text-secondary);
+      cursor: default;
+    }
+
+    /* ── Column headers — QBDS DataGrid style ────────────────────────── */
+    .table-header {
+      grid-template-columns: 40px 1.1fr 0.9fr 1.7fr 1fr 1fr 0.9fr 0.9fr 0.7fr 1.3fr !important;
+      padding: 14px var(--size-5) !important;
+      background: var(--qbds-color-container-background-primary);
+      border-bottom: 1px solid var(--qbds-color-container-border-primary) !important;
+    }
+    .col-header {
+      font-size: 13px !important;
+      font-weight: 500 !important;   /* QBDS column headers use Medium weight, not Bold */
+      color: var(--qbds-color-text-primary) !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .col-header.sortable {
+      color: var(--qbds-color-text-primary) !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;   /* match — Medium, not Bold */
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      /* Sortable button headers render as plain text — no interactive styling */
+      cursor: default !important;
+      pointer-events: none !important;
+    }
+    /* Sorting is intentionally not exposed in the QBDS DataGrid highlight —
+       hide the sort indicator icons from the prototype's sortable columns. */
+    .col-header.sortable .col-header-sort-icon,
+    .col-header-sort-icon { display: none !important; }
+
+    /* Selection checkbox column header */
+    .dg-th-checkbox {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dg-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--color-border-hover);
+      border-radius: 2px;
+      background: var(--color-surface-primary);
+      display: inline-block;
+    }
+
+    /* ── Rows — QBDS default density (no zebra striping by default) ─── */
+    /* QBDS DataGrid renders plain white rows with hairline dividers by
+       default; zebra striping is an opt-in via the Settings popover.
+       For the canonical "out-of-the-box" QBDS visual, we leave rows white. */
+    .case-row {
+      grid-template-columns: 40px 1.1fr 0.9fr 1.7fr 1fr 1fr 0.9fr 0.9fr 0.7fr 1.3fr !important;
+      padding: 10px var(--size-5) !important;   /* tighter "comfortable" density */
+      background: var(--qbds-color-container-background-primary);
+      border-bottom: 1px solid var(--qbds-color-divider-secondary) !important;
+    }
+    .case-row:hover { background: var(--qbds-color-container-background-secondary) !important; }
+
+    /* Selection checkbox in row */
+    .dg-td-checkbox {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Row actions — LinkActionButton + DropDownButton (QBDS) ──────── */
+    /* QBDS DataGrid documents these as separate column types: a
+       LinkActionColumnDefinition for the link text, and a
+       DropDownButtonColumnDefinition for the chevron-triggered menu. */
+    .actions-cell { display: flex !important; align-items: center; gap: 0; }
+    .action-split {
+      display: inline-flex;
+      align-items: center;
+      border: none !important;
+      background: transparent !important;
+      overflow: visible;
+    }
+    .action-split-primary {
+      height: 24px !important;
+      padding: 0 12px 0 0 !important;
+      background: none !important;
+      border: none !important;
+      /* Vertical divider line between link and chevron, per QBDS DataGrid reference */
+      border-right: 1px solid var(--qbds-color-container-border-primary) !important;
+      font-family: var(--font-family-body);
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      color: var(--qbds-color-link-text) !important;   /* QBDS Cobalt blue */
+      cursor: default;
+      white-space: nowrap;
+    }
+    .action-split-trigger {
+      height: 24px !important;
+      width: 24px !important;
+      padding: 0 !important;
+      background: none !important;
+      border: none !important;
+      margin-left: 0 !important;            /* trigger sits flush against the divider */
+      padding-left: 8px !important;         /* spacing between divider and chevron */
+      color: var(--qbds-color-link-text) !important;
+      cursor: default;
+    }
+
+    /* ── Single bold "Column" style adjustments ──────────────────────── */
+    .case-title {
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      margin-bottom: 1px !important;
+    }
+    .case-number {
+      font-size: 12px !important;
+      color: var(--color-text-secondary) !important;
+    }
+    .client-name {
+      font-size: 13px !important;
+      font-weight: 500 !important;
+    }
+    .client-id {
+      font-size: 11px !important;
+      color: var(--color-text-secondary) !important;
+    }
+
+    /* Status badge — Medium weight per QBDS highlight request */
+    .status-badge {
+      font-size: 11px !important;
+      padding: 2px 8px !important;
+      border-radius: 9999px !important;
+      font-weight: 500 !important;
+    }
+
+    /* Product chip — match status badge styling for visual consistency */
+    .product-chip {
+      font-size: 11px !important;
+      padding: 2px 8px !important;
+      border-radius: 9999px !important;
+    }
+
+    /* Origin "Firm" / "Client" — render as plain secondary text, not a pill badge */
+    .origin-badge,
+    .origin-badge.origin-firm,
+    .origin-badge.origin-client {
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      font-size: 12px !important;
+      font-weight: 400 !important;
+      letter-spacing: normal !important;
+      text-transform: capitalize !important;   /* "Firm" / "Client" instead of "FIRM" / "CLIENT" */
+      color: var(--qbds-color-text-secondary) !important;
+    }
+
+    /* Days outstanding — plain regular text (no pill background) */
+    .days-out-chip,
+    .days-out-chip.warn,
+    .days-out-chip.urgent {
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      font-size: 13px !important;
+      font-weight: 400 !important;
+      color: var(--qbds-color-text-primary) !important;
+    }
+
+    /* Date cells — single line, no time component (cleaner for highlight) */
+    .last-updated-cell, .date-opened-cell {
+      font-size: 13px !important;
+      color: var(--color-text-primary);
+    }
+    .last-updated-cell .date-time-sub { display: none; }
+
+    /* ── Footer / pagination — QBDS style ───────────────────────────── */
+    /* Match the real QBDS DataGrid footer: right-aligned, with
+       "1–6 of 22 items" text + "< Page [1] of 4 >" page navigator.
+       Built from real HTML (no pseudo-element hacks). */
+    .table-footer {
+      padding: 14px var(--size-5) !important;
+      background: var(--qbds-color-container-background-primary);
+      border-top: 1px solid var(--qbds-color-divider-secondary) !important;
+      justify-content: flex-end !important;
+      gap: 24px !important;
+    }
+    /* Hide the prototype's left-side "Showing X of Y" text */
+    .table-footer-text { display: none !important; }
+
+    /* New purpose-built QBDS pagination structure */
+    .qbds-pagination {
+      display: inline-flex;
+      align-items: center;
+      gap: 24px;
+      font-family: var(--font-family-body);
+      color: var(--qbds-color-text-primary);
+    }
+    .qbds-pagination-items {
+      font-family: var(--font-family-body);
+      font-size: 14px;
+      color: var(--qbds-color-text-primary);
+      white-space: nowrap;
+    }
+    /* "items" suffix added after the live-updated range text */
+    .qbds-pagination-items::after { content: " items"; }
+
+    .qbds-pagination-pager {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-family-body);
+      font-size: 14px;
+      color: var(--qbds-color-text-primary);
+    }
+    .qbds-pagination-label {
+      font-family: var(--font-family-body);
+      font-size: 14px;
+      color: var(--qbds-color-text-primary);
+      white-space: nowrap;
+    }
+    .qbds-pagination-input {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qbds-pagination-input input {
+      width: 36px;
+      height: 28px;
+      border: 1px solid var(--qbds-color-container-border-primary);
+      border-radius: 3px;
+      background: var(--qbds-color-container-background-primary);
+      font-family: var(--font-family-body);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--qbds-color-text-primary);
+      text-align: center;
+      padding: 0;
+      outline: none;
+      cursor: default;
+    }
+    .qbds-pagination-arrow {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--qbds-color-text-primary);
+      cursor: default;
+      padding: 0;
+    }
+    .qbds-pagination-arrow:disabled { color: var(--qbds-color-text-secondary); opacity: 0.5; }
+    /* Hidden controls preserved for JS compatibility */
+    .qbds-pagination-pager [hidden] { display: none !important; }
+
+    /* ── Disable interaction (visual-only highlight) ─────────────────── */
+    .case-queue-panel,
+    .case-queue-panel * {
+      cursor: default !important;
+    }
+    .case-queue-panel a,
+    .case-queue-panel button {
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── GLOBAL HEADER ─── -->
+<header class="global-header" role="banner">
+  <div class="header-logo" aria-label="Intuit Accountant Suite">
+    <span class="header-logo-top">INTUIT</span>
+    <span class="header-logo-bottom">Accountant Suite</span>
+  </div>
+  <div class="header-divider" role="separator"></div>
+  <button class="header-company-switcher" aria-label="Switch company: Placeholder" aria-haspopup="listbox">
+    <span>Placeholder</span>
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+  </button>
+  <div class="header-search" role="search">
+    <span class="header-search-icon" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/></svg>
+    </span>
+    <input type="search" placeholder="Search, jump to, or ask a question" aria-label="Global search" />
+  </div>
+  <nav class="header-right" aria-label="Header actions">
+    <button class="header-icon-btn" aria-label="Contact experts" title="Contact experts">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    </button>
+    <button class="header-icon-btn" aria-label="Tasks" title="Tasks">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2h-2"/><polyline points="9 12 11 14 15 10"/></svg>
+    </button>
+    <button class="header-icon-btn" aria-label="Workflow automation" title="Workflow Automation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </button>
+    <button class="header-icon-btn" aria-label="Notifications" title="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    </button>
+    <button class="header-icon-btn" aria-label="Settings" title="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
+    <button class="header-icon-btn" aria-label="Help" title="Help">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </button>
+    <div class="header-avatar" role="img" aria-label="User avatar: B">B</div>
+  </nav>
+</header>
+
+<!-- ─── APP SHELL ─── -->
+<div class="app-shell">
+
+  <!-- ─── LEFT BAR ─── -->
+  <!-- Left bar nav — matched to the QBDS reference screenshot exactly:
+       My menu (+), Create (+), Bookmarks, Home (active), Reports, My apps,
+       PINNED divider, Work / Clients / Team / ProAdvisor / Accounting / Pro Tax
+       (each as a circle outline with a stylized icon), Customize at the bottom. -->
+  <nav class="left-bar" aria-label="Primary navigation">
+    <!-- My menu — circled plus -->
+    <div class="nav-item" title="My menu">
+      <div class="nav-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <span class="nav-label">My menu</span>
+    </div>
+    <div class="nav-divider" role="separator"></div>
+    <!-- Create — circled plus -->
+    <div class="nav-item" title="Create">
+      <div class="nav-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <span class="nav-label">Create</span>
+    </div>
+    <div class="nav-item" title="Bookmarks">
+      <div class="nav-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </div>
+      <span class="nav-label">Bookmarks</span>
+    </div>
+    <div class="nav-item" title="Home">
+      <div class="nav-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item" title="Reports">
+      <div class="nav-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span class="nav-label">Reports</span>
+    </div>
+    <!-- My apps — 3x3 grid of dots (renamed from "All apps" per reference) -->
+    <div class="nav-item" title="My apps">
+      <div class="nav-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="5" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="19" cy="5" r="1.5" fill="currentColor"/><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/><circle cx="5" cy="19" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/><circle cx="19" cy="19" r="1.5" fill="currentColor"/></svg>
+      </div>
+      <span class="nav-label">My apps</span>
+    </div>
+    <div class="nav-divider" role="separator"></div>
+    <div class="nav-section-label" aria-label="Pinned apps">Pinned</div>
+    <!-- Pinned apps — circle outlines with stylized icons inside, per reference -->
+    <div class="nav-item" title="Work">
+      <div class="nav-pinned-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <!-- Stacked layers (Work) -->
+          <polygon points="12 7 17 10 12 13 7 10 12 7" fill="currentColor" fill-opacity="0.85" stroke="none"/>
+          <polyline points="7 13 12 16 17 13" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <span class="nav-label">Work</span>
+    </div>
+    <div class="nav-item" title="Clients">
+      <div class="nav-pinned-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <!-- Star burst (Clients) -->
+          <line x1="12" y1="7" x2="12" y2="17" stroke-width="1.6"/>
+          <line x1="7" y1="12" x2="17" y2="12" stroke-width="1.6"/>
+          <line x1="8.5" y1="8.5" x2="15.5" y2="15.5" stroke-width="1.6"/>
+          <line x1="15.5" y1="8.5" x2="8.5" y2="15.5" stroke-width="1.6"/>
+          <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <span class="nav-label">Clients</span>
+    </div>
+    <div class="nav-item" title="Team">
+      <div class="nav-pinned-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <!-- Tulip/cone shape (Team) -->
+          <path d="M8 8.5 Q12 6 16 8.5 L14 13 Q12 14.5 10 13 Z" fill="currentColor" fill-opacity="0.85" stroke="none"/>
+          <path d="M11 13 L11 17 L13 17 L13 13" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <span class="nav-label">Team</span>
+    </div>
+    <div class="nav-item" title="ProAdvisor">
+      <div class="nav-pinned-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <!-- Shield (ProAdvisor) -->
+          <path d="M12 6.5 L16.5 8.5 L16.5 12 Q16.5 15 12 17 Q7.5 15 7.5 12 L7.5 8.5 Z" fill="currentColor" fill-opacity="0.85" stroke="none"/>
+        </svg>
+      </div>
+      <span class="nav-label">ProAdvisor</span>
+    </div>
+    <div class="nav-item" title="Accounting">
+      <div class="nav-pinned-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <!-- Ribbon / megaphone (Accounting) -->
+          <polygon points="7 10 14 8 14 16 7 14" fill="currentColor" stroke="none"/>
+          <polygon points="14 8 17 9 17 15 14 16" fill="currentColor" fill-opacity="0.7" stroke="none"/>
+        </svg>
+      </div>
+      <span class="nav-label">Accounting</span>
+    </div>
+    <div class="nav-item" title="Pro Tax">
+      <div class="nav-pinned-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <!-- Folder/document (Pro Tax) -->
+          <rect x="8" y="8" width="8" height="9" rx="1" fill="currentColor" stroke="none"/>
+          <line x1="10" y1="11" x2="14" y2="11" stroke="white" stroke-width="0.8"/>
+          <line x1="10" y1="13" x2="14" y2="13" stroke="white" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <span class="nav-label">Pro Tax</span>
+    </div>
+    <div class="nav-bottom">
+      <div class="nav-item" title="Customize">
+        <div class="nav-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        </div>
+        <span class="nav-label">Customize</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── CONTENT AREA ─── -->
+  <main class="content-area" id="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Resolution Center</h1>
+    </div>
+
+    <div class="tabs-bar" role="tablist" aria-label="Resolution Center sections">
+      <div class="tab-item active" role="tab" aria-selected="true" tabindex="0">Product support</div>
+      <div class="tab-item" role="tab" aria-selected="false" tabindex="-1">Payments</div>
+      <div class="tab-item" role="tab" aria-selected="false" tabindex="-1">Payroll</div>
+    </div>
+
+    <!-- Status overview tiles — informational only. Show counts of cases in
+         each status within the current Accounts scope. (IDS does not support
+         tile-as-filter interaction in the canonical DataGrid pattern; filtering
+         is handled via the column-level Status filter dropdown below.) -->
+    <section class="status-cards" role="group" aria-label="Case status overview">
+      <div class="status-card attention" role="group" aria-label="Needs attention count">
+        <div class="status-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D63800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="status-card-count" id="card-count-needs-attention">0</div>
+        <div class="status-card-title">Needs attention</div>
+        <div class="status-card-desc">Firm action required</div>
+      </div>
+      <div class="status-card waiting-client" role="group" aria-label="Waiting on client count">
+        <div class="status-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2B77CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="status-card-count" id="card-count-waiting-client">0</div>
+        <div class="status-card-title">Waiting on client</div>
+        <div class="status-card-desc">Client action required</div>
+      </div>
+      <div class="status-card under-review" role="group" aria-label="Under review count">
+        <div class="status-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C27016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div class="status-card-count" id="card-count-under-review">0</div>
+        <div class="status-card-title">Under review</div>
+        <div class="status-card-desc">Experts are working on it</div>
+      </div>
+      <div class="status-card closed" role="group" aria-label="Closed count">
+        <div class="status-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D7C39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="status-card-count" id="card-count-decision-reached">0</div>
+        <div class="status-card-title">Closed</div>
+        <div class="status-card-desc">Last 30 days</div>
+      </div>
+    </section>
+
+    <!-- Case Queue Panel -->
+    <div class="case-queue-panel" role="region" aria-label="Case queue">
+
+      <!-- Filter bar (Accounts + Sort only — column-specific search lives below) -->
+      <div class="filter-bar">
+        <div class="filter-bar-left">
+          <span class="filter-label" id="accounts-label">Accounts</span>
+          <div class="accounts-dd-wrap" id="accounts-dd-wrap">
+            <button class="accounts-dropdown-btn" id="accounts-dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="accounts-label">
+              <span id="accounts-dd-label">My cases (0)</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+            </button>
+            <div class="accounts-dd-menu wide" id="accounts-dd-menu" role="listbox" aria-label="Account filter" hidden>
+              <div class="accounts-option selected" role="option" aria-selected="true" data-acct="my-cases">
+                <span class="accounts-option-check"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#005056" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span>
+                <div class="accounts-option-body">
+                  <div class="accounts-option-title">My cases</div>
+                  <div class="accounts-option-desc">Cases you submitted, plus cases submitted by clients you're responsible for. Default view.</div>
+                </div>
+              </div>
+              <div class="accounts-option" role="option" aria-selected="false" data-acct="firm-cases">
+                <span class="accounts-option-check"></span>
+                <div class="accounts-option-body">
+                  <div class="accounts-option-title">Firm cases</div>
+                  <div class="accounts-option-desc">Cases your firm submitted — yours and your teammates'. You can only update cases you submitted; others are view-only.</div>
+                </div>
+              </div>
+              <div class="accounts-option" role="option" aria-selected="false" data-acct="all-cases">
+                <span class="accounts-option-check"></span>
+                <div class="accounts-option-body">
+                  <div class="accounts-option-title">All cases</div>
+                  <div class="accounts-option-desc">Every case across the firm and its clients. Admin permissions only. View-only for cases you didn't submit.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──────────────────────────────────────────────────────────────
+           QBDS DataGrid toolbar — matched to the real QBDS DataGrid layout:
+           Left: labeled filter dropdowns (Accounts, Date opened, Status)
+           Center: "Filters" + "Search" text-link triggers (dark text, leading icon)
+           Right: refresh / share / copy / print icons + "Customize" text-link
+           ────────────────────────────────────────────────────────────── -->
+      <div class="dg-toolbar" role="toolbar" aria-label="Case queue toolbar">
+        <div class="dg-toolbar-left">
+          <!-- Labeled filter: Accounts -->
+          <div class="qbds-filter-field">
+            <label class="qbds-filter-label">Accounts</label>
+            <div class="qbds-filter-input">
+              <span>My cases</span>
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+            </div>
+          </div>
+          <!-- Labeled filter: Date opened -->
+          <div class="qbds-filter-field">
+            <label class="qbds-filter-label">Date opened</label>
+            <div class="qbds-filter-input">
+              <span>All dates</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="1"/><line x1="2" y1="6.5" x2="14" y2="6.5"/><line x1="5" y1="2" x2="5" y2="4"/><line x1="11" y1="2" x2="11" y2="4"/></svg>
+            </div>
+          </div>
+          <!-- Labeled filter: Status -->
+          <div class="qbds-filter-field">
+            <label class="qbds-filter-label">Status</label>
+            <div class="qbds-filter-input">
+              <span>All statuses</span>
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+            </div>
+          </div>
+          <!-- "Filters" text-link with funnel icon -->
+          <button type="button" class="qbds-text-link">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="2 3 14 3 9 9 9 13 7 13 7 9 2 3"/></svg>
+            Filters
+          </button>
+          <!-- "Search" text-link with magnifier icon -->
+          <button type="button" class="qbds-text-link">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/></svg>
+            Search
+          </button>
+        </div>
+        <div class="dg-toolbar-right">
+          <!-- Icon actions: refresh, share, copy, print -->
+          <div class="qbds-toolbar-icons-group">
+            <button type="button" class="qbds-toolbar-icon" aria-label="Refresh">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            </button>
+            <button type="button" class="qbds-toolbar-icon" aria-label="Share">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
+            <button type="button" class="qbds-toolbar-icon" aria-label="Duplicate">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <button type="button" class="qbds-toolbar-icon" aria-label="Print">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            </button>
+          </div>
+          <!-- "Customize" text-link with sliders icon -->
+          <button type="button" class="qbds-text-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            Customize
+          </button>
+        </div>
+      </div>
+
+      <!-- Column headers — Date opened / Last updated / Days out are sortable -->
+      <div class="table-header" role="row">
+        <div class="col-header dg-th-checkbox" role="columnheader" aria-label="Select all rows">
+          <span class="dg-checkbox" aria-hidden="true"></span>
+        </div>
+        <div class="col-header" role="columnheader">Client</div>
+        <div class="col-header" role="columnheader">Product</div>
+        <div class="col-header" role="columnheader">Case</div>
+        <div class="col-header" role="columnheader">Status</div>
+        <div class="col-header" role="columnheader">Submitted by</div>
+        <button type="button" class="col-header sortable" role="columnheader" aria-sort="none" data-sort-key="opened" id="sort-opened">
+          Date opened
+          <span class="col-header-sort-icon" id="sort-opened-icon" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="col-header sortable active" role="columnheader" aria-sort="descending" data-sort-key="updated" id="sort-updated">
+          Last updated
+          <span class="col-header-sort-icon" id="sort-updated-icon" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="col-header sortable" role="columnheader" aria-sort="none" data-sort-key="days" id="sort-days">
+          Days out
+          <span class="col-header-sort-icon" id="sort-days-icon" aria-hidden="true"></span>
+        </button>
+        <div class="col-header" role="columnheader">Actions</div>
+      </div>
+
+      <!-- Column-aligned search inputs (each input sits over the column it filters) -->
+      <div class="filter-inputs-row" role="row" aria-label="Column filters">
+        <div class="filter-input-wrap" id="client-wrap">
+          <span class="filter-input-icon" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/></svg>
+          </span>
+          <label class="visually-hidden" for="client-input">Search client</label>
+          <input id="client-input" class="filter-input" type="text" placeholder="Search client..." autocomplete="off" aria-autocomplete="list" aria-controls="client-suggestions" aria-expanded="false" />
+          <div class="typeahead-dropdown" id="client-suggestions" role="listbox" hidden></div>
+        </div>
+        <div class="status-filter-wrap" id="product-dropdown-wrap">
+          <button class="sort-select-btn" id="product-dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by product: All" style="width:100%;justify-content:space-between;">
+            <span id="product-dd-label">All</span>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+          </button>
+          <div class="sort-dropdown-menu" id="product-dd-menu" role="listbox" aria-label="Filter by product" hidden style="left:0;right:auto;min-width:180px;max-height:280px;overflow-y:auto;"></div>
+        </div>
+        <div class="filter-input-wrap" id="case-wrap">
+          <span class="filter-input-icon" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/></svg>
+          </span>
+          <label class="visually-hidden" for="case-input">Search by case subject or number</label>
+          <input id="case-input" class="filter-input" type="text" placeholder="Search subject or case #..." autocomplete="off" aria-autocomplete="list" aria-controls="case-suggestions" aria-expanded="false" />
+          <div class="typeahead-dropdown" id="case-suggestions" role="listbox" hidden></div>
+        </div>
+        <div class="status-filter-wrap" id="status-dropdown-wrap">
+          <button class="sort-select-btn" id="status-dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Filter by status: All" style="width:100%;justify-content:space-between;">
+            <span id="status-dd-label">All</span>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+          </button>
+          <div class="sort-dropdown-menu" id="status-dd-menu" role="listbox" aria-label="Filter by status" hidden style="left:0;right:auto;min-width:200px;">
+            <div class="sort-option selected" role="option" aria-selected="true"  data-status="all">
+              <span class="sort-check"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#005056" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 8 7 12 13 4"/></svg></span>All statuses
+            </div>
+            <div class="sort-option" role="option" aria-selected="false" data-status="needs-attention">
+              <span class="sort-check"></span>Needs attention
+            </div>
+            <div class="sort-option" role="option" aria-selected="false" data-status="waiting-client">
+              <span class="sort-check"></span>Waiting on client
+            </div>
+            <div class="sort-option" role="option" aria-selected="false" data-status="under-review">
+              <span class="sort-check"></span>Under review
+            </div>
+            <div class="sort-option" role="option" aria-selected="false" data-status="decision-reached">
+              <span class="sort-check"></span>Closed
+            </div>
+          </div>
+        </div>
+        <div class="filter-input-wrap" id="submitter-wrap">
+          <span class="filter-input-icon" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/></svg>
+          </span>
+          <label class="visually-hidden" for="submitter-input">Search submitter</label>
+          <input id="submitter-input" class="filter-input" type="text" placeholder="Search submitter..." autocomplete="off" aria-autocomplete="list" aria-controls="submitter-suggestions" aria-expanded="false" />
+          <div class="typeahead-dropdown" id="submitter-suggestions" role="listbox" hidden></div>
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      <!-- Case rows + inline add-info panels rendered by JS -->
+      <div id="case-body" role="rowgroup" aria-live="polite" aria-label="Case results"></div>
+
+      <!-- Footer: IDS pagination -->
+      <!-- QBDS DataGrid footer pagination — right-aligned, purpose-built markup
+           matching the QBDS reference: "1–6 of 22 items   < Page [1] of 4 >".
+           IDs preserved (#pagination-range, #page-prev, #page-next, etc.) so the
+           prototype's JS updaters still work when they fire. -->
+      <div class="table-footer">
+        <span class="table-footer-text" id="footer-text"></span>
+        <nav class="qbds-pagination" id="pagination" aria-label="Case list pagination">
+          <!-- Items count (live-updated by the prototype) -->
+          <span class="qbds-pagination-items" id="pagination-range">1–6 of 22</span>
+          <!-- Page navigator: prev arrow → "Page" label → input box → "of N" → next arrow -->
+          <div class="qbds-pagination-pager" role="group" aria-label="Page navigation">
+            <button class="qbds-pagination-arrow" id="page-prev" aria-label="Previous page" disabled>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="10 4 6 8 10 12"/></svg>
+            </button>
+            <span class="qbds-pagination-label">Page</span>
+            <span class="qbds-pagination-input"><input type="text" value="1" aria-label="Current page" readonly/></span>
+            <span class="qbds-pagination-label">of 4</span>
+            <button class="qbds-pagination-arrow" id="page-next" aria-label="Next page">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 4 10 8 6 12"/></svg>
+            </button>
+            <!-- Hidden first/last buttons preserved for JS compatibility -->
+            <button class="qbds-pagination-arrow" id="page-first" hidden aria-hidden="true"></button>
+            <button class="qbds-pagination-arrow" id="page-last" hidden aria-hidden="true"></button>
+            <!-- Hidden rows-per-page select preserved for JS compatibility -->
+            <select id="rows-per-page" hidden aria-hidden="true">
+              <option value="6" selected>6</option>
+            </select>
+          </div>
+        </nav>
+      </div>
+
+    </div><!-- /.case-queue-panel -->
+
+  </main>
+</div><!-- /.app-shell -->
+
+<!-- ─── CASE DETAILS OVERLAY ─── -->
+<div class="overlay-backdrop" id="overlay-backdrop" role="dialog" aria-modal="true" aria-labelledby="details-title">
+  <div class="case-details-panel" id="case-details-panel">
+
+    <div class="details-header">
+      <button class="details-back-btn" id="details-back-btn" aria-label="Back to case list">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="10 4 6 8 10 12"/></svg>
+        Case list
+      </button>
+      <button class="details-close-btn" id="details-close-btn" aria-label="Close case details">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="details-body" id="details-body">
+      <!-- populated by JS -->
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const ALL_CASES = [
+  {
+    id:'199930492', title:'Trying to maximize reimbursements on form c',
+    client:'House Baratheon of Storm\'s End', status:'under-review',
+    updated:'2025-11-17',
+    statusNote: 'Case reopened',
+    expertAssigned: false,
+    expertNote: 'An expert will be assigned to your case soon.',
+    emails: [
+      {
+        sender:'Arryk Stark', date:'November 10, 2025 4:30 PM PST',
+        subject:'Regarding Case 3 Tax Issues',
+        greeting:'Hello Orys,',
+        body:'Thank you for reaching out about your case. I\'ve taken a closer look at your specific issues and have determined a solution. I\'m attaching for your review a copy of your Tax Form, as well as our Letter of Determination. You\'ll find an explanation in our Letter of Determination as to how we came to this resolution and any resources you may need. You\'ll notice in your Letter of Determination Sections A, B, and C, which all detail specific information about your case.',
+        signature:null,
+        expanded: false
+      },
+      {
+        sender:'Orys Baratheon', date:'November 9, 2025 10:00 AM PST',
+        subject:'Regarding Case 3 Tax Issues',
+        greeting:'Hello Arryk,',
+        body:'I\'m reaching out because I have a dispute with this specific tax issue. I\'m not particularly sure if this is correct, and I feel like there needs to be some sort of review. I\'m attaching a copy of my Tax Form as a reference.',
+        signature:'Thank you,\nOrys Baratheon\nLord of Storm\'s End\nLord Paramount of the Reach',
+        expanded: true
+      }
+    ]
+  },
+  { id:'123456789', title:'Having problems with resolution', client:'Arryn Granaries', status:'needs-attention', updated:'2025-11-12', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', submittedBy:'Mira Arryn', origin:'client', emails:[
+    { sender:'Mira Arryn', date:'November 12, 2025 9:15 AM PST', subject:'Re: Having problems with resolution', greeting:'Hello,', body:'I wanted to flag that we have been unable to get a clear resolution on this case for over two weeks now. Each time we submit documents we get a different response from the system. Could you please escalate this to a senior specialist?', signature:'Mira Arryn\nFinance Lead, Arryn Granaries' },
+    { sender:'Support Team', date:'November 11, 2025 3:40 PM PST', subject:'Re: Having problems with resolution', greeting:'Hi Mira,', body:'Thank you for reaching out. We have received your documentation and are reviewing the case history. We will follow up within 48 hours with a status update. Please do not submit additional documents until you hear from us.', signature:'IAS Support Team' },
+    { sender:'Mira Arryn', date:'November 10, 2025 11:00 AM PST', subject:'Having problems with resolution', greeting:'Hello,', body:'We opened this case three weeks ago regarding a discrepancy in our quarterly reconciliation. We have submitted all requested documentation but the case keeps being marked as incomplete. Please advise on the correct next steps.', signature:'Mira Arryn\nFinance Lead, Arryn Granaries' },
+  ]},
+  { id:'105968345', title:'Unsure about equity and tax', client:'Dorne LLC', status:'needs-attention', updated:'2025-11-12', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', emails:[
+    { sender:'Oberyn Martell', date:'November 12, 2025 2:00 PM PST', subject:'Equity classification and tax treatment', greeting:'Hello,', body:'We are restructuring our equity plan and are uncertain how to classify the new instruments for tax purposes. Specifically, we need guidance on whether restricted stock units issued to non-US employees should be treated as ordinary income or capital gains at vesting.', signature:'Oberyn Martell\nCFO, Dorne LLC' },
+    { sender:'Tax Specialist', date:'November 11, 2025 10:30 AM PST', subject:'Re: Equity classification and tax treatment', greeting:'Hi Oberyn,', body:'Thank you for your question. This area involves both domestic and international tax considerations. We will need to review your equity plan documents before providing a definitive answer. Could you please attach the plan summary and any grant agreements?', signature:'IAS Tax Specialist' },
+  ]},
+  { id:'309821044', title:'How much should I be paying for this', client:'Dorne LLC', status:'needs-attention', updated:'2025-11-11', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', emails:[
+    { sender:'Ellaria Sand', date:'November 11, 2025 8:45 AM PST', subject:'Quarterly service fee question', greeting:'Hi,', body:'I received an invoice that seems higher than expected based on last quarter. Can someone confirm whether the rate change that was announced in September applies to our account tier? I want to make sure we are being billed correctly before we process payment.', signature:'Ellaria Sand\nAccounting, Dorne LLC' },
+  ]},
+  { id:'958193503', title:'Submitted a report, now can\'t access it', client:'Lannister Corp', status:'under-review', updated:'2025-11-12', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[
+    { sender:'Tyrion Lannister', date:'November 12, 2025 10:05 AM PST', subject:'Report access issue — urgent', greeting:'Hello,', body:'We submitted our Q3 financial summary report on November 8th and received a confirmation. However, the report is no longer visible in our dashboard and attempting to access the direct link returns a 404 error. This report is needed for an audit on November 15th. Please restore access immediately.', signature:'Tyrion Lannister\nVP Finance, Lannister Corp' },
+    { sender:'Platform Support', date:'November 12, 2025 11:30 AM PST', subject:'Re: Report access issue — urgent', greeting:'Hi Tyrion,', body:'We have confirmed the report was successfully submitted and is present in our system. The access issue appears to be related to a permissions migration that ran on November 10th. Our engineering team is working to restore visibility for affected accounts. We expect resolution within 24 hours and will notify you directly.', signature:'IAS Platform Support' },
+  ]},
+  { id:'333748291', title:'Quarterly installment questions', client:"King's Landing Inc", status:'under-review', updated:'2025-11-12', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[
+    { sender:'Cersei Lannister', date:'November 12, 2025 1:15 PM PST', subject:'Q4 installment payment schedule', greeting:'Hello,', body:'We need clarification on the correct installment amounts for Q4 given that we made an overpayment in Q3. Our records show a credit of approximately $14,200 that should offset the upcoming installment. Can you confirm whether this credit will be applied automatically or if we need to submit a formal offset request?', signature:"Cersei Lannister\nTreasurer, King's Landing Inc" },
+    { sender:'Billing Specialist', date:'November 11, 2025 4:00 PM PST', subject:'Re: Q4 installment payment schedule', greeting:'Hi Cersei,', body:'Thank you for flagging this. We have located the Q3 overpayment credit on your account. Credits of this type are applied automatically to the next billing cycle, but given the amount we want to verify the allocation before your Q4 due date. Our billing team is reviewing and will confirm the adjusted amount by end of week.', signature:'IAS Billing Specialist' },
+  ]},
+  { id:'112039458', title:'Not happy with the way this was resolved', client:"King's Landing Inc", status:'decision-reached', updated:'2025-11-11', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', emails:[
+    { sender:'Joffrey Baratheon', date:'November 11, 2025 9:00 AM PST', subject:'Dissatisfied with case outcome', greeting:'Hello,', body:'The resolution provided for this case is unacceptable. The determination letter states that our filing was correct but does not address the specific line items we disputed. We are requesting a formal review of sections 4B and 7A of the determination. Please advise on the escalation process.', signature:"Joffrey Baratheon\nKing's Landing Inc" },
+    { sender:'Resolution Team', date:'November 10, 2025 2:30 PM PST', subject:'Case 112039458 — Decision reached', greeting:'Hello,', body:'After a thorough review of the documentation submitted, we have determined that the original filing was processed correctly in accordance with current guidelines. A detailed Letter of Determination has been attached outlining our findings. If you wish to dispute this outcome, you may file a formal appeal within 30 days.', signature:'IAS Resolution Team' },
+    { sender:'Joffrey Baratheon', date:'November 8, 2025 11:00 AM PST', subject:'Case 112039458 — escalation request', greeting:'Hello,', body:'We have been waiting three weeks for a resolution on this matter. The original specialist assigned to our case has not responded to our last two messages. We are formally requesting escalation to a senior reviewer.', signature:"Joffrey Baratheon\nKing's Landing Inc" },
+  ]},
+  { id:'774920183', title:'Year-end payroll discrepancy', client:'Arryn Granaries', status:'under-review', updated:'2025-11-10', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[
+    { sender:'Robin Arryn', date:'November 10, 2025 8:00 AM PST', subject:'Year-end payroll figures do not reconcile', greeting:'Hi,', body:'When we ran our year-end payroll report the total wages figure does not match what we submitted on the 941 forms for Q3 and Q4 combined. The discrepancy is $3,847. We have checked our records and believe the error originated in the system, not in our submissions. Please review.', signature:'Robin Arryn\nPayroll, Arryn Granaries' },
+  ]},
+  { id:'882736410', title:'Sales tax filing error for Q3', client:'Dorne LLC', status:'decision-reached', updated:'2025-11-09', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', emails:[
+    { sender:'Resolution Team', date:'November 9, 2025 3:00 PM PST', subject:'Case 882736410 — Sales tax determination', greeting:'Hello,', body:'We have completed our review of the Q3 sales tax filing discrepancy for Dorne LLC. The error was caused by an incorrect rate being applied to out-of-state transactions in Nevada. An amended return has been prepared. The net adjustment results in a refund of $1,204 which will be processed within 10 business days.', signature:'IAS Resolution Team' },
+    { sender:'Ellaria Sand', date:'November 6, 2025 10:15 AM PST', subject:'Q3 sales tax filing — possible error', greeting:'Hello,', body:'We noticed that our Q3 sales tax submission may have applied the wrong rate for Nevada transactions. Our accountant flagged this during a routine review. Can you confirm whether an amendment is needed and what the process is?', signature:'Ellaria Sand\nAccounting, Dorne LLC' },
+  ]},
+  { id:'991827364', title:'Cannot reconcile bank account',             client:'Lannister Corp',        status:'needs-attention',  updated:'2025-11-08', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', emails:[] },
+  { id:'664829103', title:'Invoice duplication on multiple transactions', client:'King\'s Landing Inc', status:'decision-reached', updated:'2025-11-07', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', emails:[] },
+  { id:'543210987', title:'W-2 form not generated correctly',          client:'Baratheon & Co.',       status:'needs-attention',  updated:'2025-11-06', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', emails:[] },
+  { id:'210938475', title:'Credit memo not applied to invoice',        client:'Baratheon & Co.',       status:'under-review',     updated:'2025-11-05', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[] },
+  { id:'398271640', title:'Duplicate vendor payment detected',         client:'Arryn Granaries',       status:'decision-reached', updated:'2025-11-04', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', emails:[] },
+  { id:'657483920', title:'Chart of accounts mapping question',        client:'Lannister Corp',        status:'under-review',     updated:'2025-11-03', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[] },
+  { id:'019283746', title:'Missing 1099 contractor records',           client:'Baratheon & Co.',       status:'decision-reached', updated:'2025-11-01', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', emails:[] },
+  { id:'871029384', title:'Payroll tax deposit timing issue',          client:'Dorne LLC',             status:'needs-attention',  updated:'2025-10-30', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', emails:[] },
+  { id:'293847560', title:'State income tax withholding error',        client:'Arryn Granaries',       status:'under-review',     updated:'2025-10-28', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[] },
+  { id:'748291038', title:'Cannot add new asset account',              client:'King\'s Landing Inc',   status:'decision-reached', updated:'2025-10-25', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', emails:[] },
+  { id:'182736459', title:'Expense category mismatch in P&L',         client:'Lannister Corp',        status:'needs-attention',  updated:'2025-10-22', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', emails:[] },
+  { id:'930284716', title:'Client cannot log into their portal',       client:'Baratheon & Co.',       status:'under-review',     updated:'2025-10-20', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', emails:[] },
+];
+
+// Backfill submittedBy / origin / opened for any case missing these fields.
+// "origin" = 'firm' (an accountant at the firm opened the case)
+//         or 'client' (someone at the client company opened the case)
+// 'Blaise Snow' is the current signed-in accountant (the prototype's "you").
+const FIRM_USERS = ['Blaise Snow', 'Brienne Tarth', 'Davos Seaworth', 'Samwell Tarly'];
+const CLIENT_SUBMITTERS = {
+  'Arryn Granaries':              ['Mira Arryn', 'Robin Arryn'],
+  'Dorne LLC':                    ['Oberyn Martell', 'Ellaria Sand'],
+  'Lannister Corp':               ['Tyrion Lannister', 'Jaime Lannister'],
+  "King's Landing Inc":           ['Cersei Lannister', 'Joffrey Baratheon'],
+  'Baratheon & Co.':              ['Stannis Baratheon', 'Davos Seaworth'],
+  "House Baratheon of Storm's End": ['Orys Baratheon'],
+};
+// Synthetic time of day for the "updated" timestamp on recent cases. Cases
+// updated within the last 24 hours show a time, not just a date.
+function offsetDateISO(iso, daysBack){
+  const d = new Date(iso + 'T12:00:00');
+  d.setDate(d.getDate() - daysBack);
+  return d.toISOString().slice(0,10);
+}
+
+// Derive the Intuit product the case is filed against from the title/subject.
+// Real data would have this as a tagged field; here we infer it so existing
+// fixture cases don't need to be hand-labeled.
+const PRODUCT_KEYWORDS = [
+  ['Payroll',       ['payroll','w-2','w2','1099','withholding','wages','deduction','benefits']],
+  ['Bill Pay',      ['bill pay','vendor payment','duplicate vendor','pay bill']],
+  ['Sales Tax',     ['sales tax','nexus']],
+  ['ProTax',        ['protax','pro tax','1065','e-file','partnership return','tax form','form c','equity']],
+  ['Invoicing',     ['invoice','payment link','credit memo','retainer']],
+  ['Banking',       ['bank feed','reconcile','bank account','operating account']],
+  ['Reports',       ['report','p&l','ar aging','aging','quarterly','installment']],
+  ['Accounting',    ['chart of accounts','asset account','reconcil','expense category','prior-year','prior year','equity']],
+  ['QBO Accountant',['qbo accountant','dashboard','permissions','user permissions','portal','certification','badge']],
+  ['Inventory',     ['inventory']],
+];
+function inferProduct(title){
+  const t = String(title||'').toLowerCase();
+  for (const [name, kws] of PRODUCT_KEYWORDS){
+    if (kws.some(kw => t.includes(kw))) return name;
+  }
+  return 'Other';
+}
+
+// Synthetic Client ID — stable per client name so every row for the same
+// client shows the same ID. Format: CL-XXXXXX (6-digit, deterministic hash).
+const CLIENT_ID_CACHE = {};
+function clientId(name){
+  if (CLIENT_ID_CACHE[name]) return CLIENT_ID_CACHE[name];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) {
+    h = ((h << 5) - h + name.charCodeAt(i)) | 0;
+  }
+  const six = String(Math.abs(h) % 1000000).padStart(6, '0');
+  CLIENT_ID_CACHE[name] = `CL-${six}`;
+  return CLIENT_ID_CACHE[name];
+}
+ALL_CASES.forEach((c, i) => {
+  if (!c.origin) {
+    // ~1 in 3 cases are firm-opened; rest are client-opened.
+    c.origin = (i % 3 === 0) ? 'firm' : 'client';
+  }
+  if (!c.submittedBy) {
+    if (c.origin === 'firm') {
+      // Bias toward Blaise Snow (the signed-in accountant) so his queue feels real.
+      c.submittedBy = (i % 2 === 0) ? 'Blaise Snow' : FIRM_USERS[(i % (FIRM_USERS.length - 1)) + 1];
+    } else {
+      const pool = CLIENT_SUBMITTERS[c.client] || [c.client.split(' ')[0]];
+      c.submittedBy = pool[i % pool.length];
+    }
+  }
+  // Every pre-existing case has Blaise as the assigned accountant.
+  // 'mine'  = Blaise's clients, submitted by Blaise or his clients (his queue)
+  // 'assignedToMe' = Blaise has accountant access to the client this case is for,
+  //                  so he can see it regardless of submitter.
+  // 'submittedByMe' = Blaise personally submitted, so he can update/close.
+  if (!c.accountScope) c.accountScope = 'mine';
+  if (c.assignedToMe === undefined) {
+    c.assignedToMe = (c.accountScope === 'mine');
+  }
+  if (c.submittedByMe === undefined) {
+    c.submittedByMe = (c.submittedBy === 'Blaise Snow');
+  }
+  // Synthetic opened date: 3–28 days before "updated", determined by id hash
+  // so it's stable across renders. Pre-existing cases didn't have this field.
+  if (!c.opened) {
+    const h = Array.from(String(c.id)).reduce((a,ch)=>a + ch.charCodeAt(0), 0);
+    c.opened = offsetDateISO(c.updated, 3 + (h % 26));
+  }
+  if (!c.product) c.product = inferProduct(c.title);
+});
+
+// ─── FIRM-INTERNAL CASES ─────────────────────────────────────────────────────
+// "My firm's cases" = product issues the firm itself is experiencing with IAS,
+// QBO Accountant, ProTax, etc. — about the firm's own books and tools, not a
+// client's. Client field uses the firm name.
+const FIRM_NAME = 'Snow & Tarth Advisory';
+const FIRM_CASES = [
+  { id:'F-200184', title:'IAS dashboard not loading for two firm users', client:FIRM_NAME, status:'needs-attention', updated:'2025-11-14', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', submittedBy:'Blaise Snow', origin:'firm', accountScope:'firm', emails:[
+    { sender:'Blaise Snow', date:'November 14, 2025 9:10 AM PST', subject:'IAS dashboard blank for Brienne and Davos', greeting:'Hi,', body:'Two of our team members cannot load the IAS dashboard since the maintenance window on Nov 13. Browser cache cleared, tried different browsers, same result. This is blocking our morning review. Please advise.', signature:'Blaise Snow\nManaging Partner, Snow & Tarth Advisory' },
+  ]},
+  { id:'F-200217', title:'ProTax e-file rejected for firm partnership return', client:FIRM_NAME, status:'under-review', updated:'2025-11-13', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', submittedBy:'Brienne Tarth', origin:'firm', accountScope:'firm', emails:[
+    { sender:'Brienne Tarth', date:'November 13, 2025 2:45 PM PST', subject:'Firm 1065 rejected — error code R0000-902', greeting:'Hello,', body:'Our own firm partnership return is being rejected with error R0000-902 (taxpayer TIN must not be the same as another return). We have only filed once this year. Need help identifying the duplicate flag.', signature:'Brienne Tarth\nTax Lead' },
+  ]},
+  { id:'F-200298', title:'QBO Accountant — cannot add new firm bank feed', client:FIRM_NAME, status:'needs-attention', updated:'2025-11-12', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', submittedBy:'Blaise Snow', origin:'firm', accountScope:'firm', emails:[] },
+  { id:'F-200305', title:'Payroll — firm benefits deduction not posting', client:FIRM_NAME, status:'under-review', updated:'2025-11-10', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', submittedBy:'Samwell Tarly', origin:'firm', accountScope:'firm', emails:[] },
+  { id:'F-200412', title:'Firm-level user permissions reset overnight', client:FIRM_NAME, status:'decision-reached', updated:'2025-11-08', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', submittedBy:'Davos Seaworth', origin:'firm', accountScope:'firm', emails:[] },
+  { id:'F-200478', title:'ProAdvisor certification badge missing from profile', client:FIRM_NAME, status:'decision-reached', updated:'2025-11-04', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', submittedBy:'Blaise Snow', origin:'firm', accountScope:'firm', emails:[] },
+];
+
+// ─── OTHER-ACCOUNTANT CLIENT CASES ───────────────────────────────────────────
+// "All client cases" = every client case in the firm. These belong to other
+// accountants on the team (not Blaise). Visible only to firm admins.
+const OTHER_CLIENT_CASES = [
+  { id:'455029811', title:'Inventory valuation mismatch after Q3 close', client:'Tyrell Vineyards', status:'needs-attention', updated:'2025-11-14', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', submittedBy:'Brienne Tarth', origin:'firm', accountScope:'other-client', emails:[] },
+  { id:'556139274', title:'Sales tax nexus question for new state', client:'Tully Trading Co.', status:'waiting-client-raw', updated:'2025-11-13', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on client to provide nexus documentation.', submittedBy:'Margaery Tyrell', origin:'client', accountScope:'other-client', emails:[] },
+  { id:'601928374', title:'Bank feed disconnected for operating account', client:'Frey Holdings', status:'under-review', updated:'2025-11-12', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', submittedBy:'Samwell Tarly', origin:'firm', accountScope:'other-client', emails:[] },
+  { id:'729104857', title:'Year-end W-2 corrections for terminated employees', client:'Tyrell Vineyards', status:'under-review', updated:'2025-11-11', statusNote:'Under review', expertAssigned:true, expertNote:'An expert is reviewing your case.', submittedBy:'Olenna Tyrell', origin:'client', accountScope:'other-client', emails:[] },
+  { id:'834756291', title:'AR aging report showing incorrect dates', client:'Tully Trading Co.', status:'needs-attention', updated:'2025-11-09', statusNote:'Needs attention', expertAssigned:false, expertNote:'Waiting on your response.', submittedBy:'Edmure Tully', origin:'client', accountScope:'other-client', emails:[] },
+  { id:'910827364', title:'Cannot import prior-year balances', client:'Frey Holdings', status:'decision-reached', updated:'2025-11-06', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', submittedBy:'Davos Seaworth', origin:'firm', accountScope:'other-client', emails:[] },
+  { id:'118273645', title:'Payment link not generating for retainer invoice', client:'Tyrell Vineyards', status:'decision-reached', updated:'2025-11-03', statusNote:'Decision reached', expertAssigned:true, expertNote:'A decision has been reached on your case.', submittedBy:'Loras Tyrell', origin:'client', accountScope:'other-client', emails:[] },
+];
+
+// The waiting-client-raw status above is just shorthand — normalize to the
+// underlying 'needs-attention' status the rest of the system uses. The
+// displayStatus() helper will route it to "Waiting on client" via origin.
+OTHER_CLIENT_CASES.forEach(c => { if (c.status === 'waiting-client-raw') c.status = 'needs-attention'; });
+
+// Backfill submittedByMe + assignedToMe + opened for firm + other-client cases.
+// FIRM_CASES belong to the firm itself — every accountant on the firm has access.
+// OTHER_CLIENT_CASES belong to teammates' clients — Blaise can only see them if
+// he's admin (i.e., via the "All cases" view). assignedToMe = false for those.
+FIRM_CASES.forEach(c => {
+  if (c.submittedByMe === undefined) c.submittedByMe = (c.submittedBy === 'Blaise Snow');
+  if (c.assignedToMe === undefined)  c.assignedToMe  = true;
+  if (!c.opened) {
+    const h = Array.from(String(c.id)).reduce((a,ch)=>a + ch.charCodeAt(0), 0);
+    c.opened = offsetDateISO(c.updated, 3 + (h % 26));
+  }
+  if (!c.product) c.product = inferProduct(c.title);
+});
+OTHER_CLIENT_CASES.forEach(c => {
+  if (c.submittedByMe === undefined) c.submittedByMe = (c.submittedBy === 'Blaise Snow');
+  if (c.assignedToMe === undefined)  c.assignedToMe  = false;
+  if (!c.opened) {
+    const h = Array.from(String(c.id)).reduce((a,ch)=>a + ch.charCodeAt(0), 0);
+    c.opened = offsetDateISO(c.updated, 3 + (h % 26));
+  }
+  if (!c.product) c.product = inferProduct(c.title);
+});
+
+// Merge into the master list.
+ALL_CASES.push(...FIRM_CASES, ...OTHER_CLIENT_CASES);
+
+const CLIENTS    = [...new Set(ALL_CASES.map(c => c.client))].sort();
+const SUBMITTERS = [...new Set(ALL_CASES.map(c => c.submittedBy))].sort();
+const PAGE_SIZE = 6;
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let caseQ      = '';
+let clientQ    = '';
+let submitterQ = '';
+let statusF    = 'all';
+let productF   = 'all';
+// Per-column sort: key = 'updated' | 'opened' | 'days'; dir = 'desc' | 'asc'
+let sortKey    = 'updated';
+let sortDir    = 'desc';
+let rowsPerPage = PAGE_SIZE;
+let pageIndex   = 0;     // zero-based
+// (openAddInfoId / openReopenId removed — Add Info and Reopen now happen
+//  exclusively in the right-side drawer, not as inline row panels.)
+// 'my-cases' (default) | 'firm-cases' | 'all-cases' (admin)
+let accountsFilter = 'my-cases';
+
+// "Today" anchor for the prototype. Real "now" would be Date.now(), but the
+// mock data is dated November 2025, so anchor to that to keep "days outstanding"
+// meaningful in the demo.
+const TODAY_ANCHOR_MS = new Date('2025-11-17T12:00:00').getTime();
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function hi(text, q){
+  if(!q) return esc(text);
+  const i = text.toLowerCase().indexOf(q.toLowerCase());
+  if(i===-1) return esc(text);
+  return esc(text.slice(0,i))+'<span class="typeahead-highlight">'+esc(text.slice(i,i+q.length))+'</span>'+esc(text.slice(i+q.length));
+}
+
+function fmtDate(iso){
+  const d = new Date(iso+'T12:00:00');
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+// Days between case 'updated' (or 'opened') and the demo "today".
+function daysBetween(isoFrom, msTo){
+  const from = new Date(isoFrom + 'T12:00:00').getTime();
+  return Math.max(0, Math.round((msTo - from) / (24*60*60*1000)));
+}
+function daysOutstanding(c){ return daysBetween(c.opened, TODAY_ANCHOR_MS); }
+
+// If a date is within ~24h of the anchor, show a synthetic time so users can
+// tell sub-day cases apart. Otherwise show the date alone.
+function fmtUpdatedWithTime(iso, c){
+  const from = new Date(iso + 'T12:00:00').getTime();
+  const ageMs = TODAY_ANCHOR_MS - from;
+  const dateStr = fmtDate(iso);
+  if (ageMs >= 0 && ageMs < 24*60*60*1000) {
+    // Stable synthetic hour:minute derived from the case id so it doesn't
+    // change between renders.
+    const h = Array.from(String(c.id)).reduce((a,ch)=>a + ch.charCodeAt(0), 0);
+    const hr = h % 12 || 12;
+    const mn = (h * 7) % 60;
+    const ampm = (h % 24) < 12 ? 'AM' : 'PM';
+    return { date: dateStr, time: `${hr}:${String(mn).padStart(2,'0')} ${ampm} PST` };
+  }
+  return { date: dateStr, time: null };
+}
+
+function statusLabel(s){
+  return {
+    'needs-attention':'Needs attention',
+    'waiting-client':'Waiting on client',
+    'under-review':'Under review',
+    'decision-reached':'Closed'
+  }[s]||s;
+}
+
+// The "display status" surfaces firm-vs-client routing in the UI.
+// Raw "needs-attention" is split: client-opened cases become "waiting-client",
+// firm-opened cases stay "needs-attention".
+function displayStatus(c){
+  if(c.status === 'needs-attention' && c.origin === 'client') return 'waiting-client';
+  return c.status;
+}
+
+function isOpen(status){ return status === 'needs-attention' || status === 'under-review'; }
+
+// ─── FILTER & SORT ────────────────────────────────────────────────────────────
+// Accountants see cases for every client they're assigned to, regardless of who
+// submitted (firm member or client). They can only update/close cases they
+// personally submitted — every other case is view-only.
+//
+// 'my-cases'   = cases I submitted, plus cases submitted by clients I'm
+//                responsible for (i.e., assigned to me)
+// 'firm-cases' = cases the firm submitted: this accountant or a teammate
+// 'all-cases'  = every case across the firm and its clients (admin only)
+function inAccountsScope(c){
+  if (accountsFilter === 'my-cases')
+    return c.submittedByMe === true || (c.assignedToMe === true && c.origin === 'client');
+  if (accountsFilter === 'firm-cases')
+    return c.origin === 'firm' && (c.assignedToMe === true || c.accountScope === 'firm');
+  if (accountsFilter === 'all-cases')
+    return c.assignedToMe === true || c.accountScope === 'firm' || c.accountScope === 'other-client';
+  return true;
+}
+
+// Live count of cases per Accounts scope — used to label the dropdown.
+function scopeCount(scope){
+  if (scope === 'my-cases')
+    return ALL_CASES.filter(c => c.submittedByMe === true || (c.assignedToMe === true && c.origin === 'client')).length;
+  if (scope === 'firm-cases')
+    return ALL_CASES.filter(c => c.origin === 'firm' && (c.assignedToMe === true || c.accountScope === 'firm')).length;
+  if (scope === 'all-cases')
+    return ALL_CASES.filter(c => c.assignedToMe === true || c.accountScope === 'firm' || c.accountScope === 'other-client').length;
+  return 0;
+}
+function accountLabel(scope){
+  const n = scopeCount(scope);
+  const titles = { 'my-cases': "My cases", 'firm-cases': "Firm cases", 'all-cases': "All cases" };
+  return `${titles[scope]} (${n})`;
+}
+
+// Context line shown above the status tiles. Makes the scope of the dashboard
+// numbers explicit so the user understands when (and why) counts change as
+// they switch Accounts categories.
+function scopeHintText(scope){
+  if (scope === 'my-cases')
+    return "Showing cases you submitted, plus cases submitted by clients you're responsible for. You can add information to any of these.";
+  if (scope === 'firm-cases')
+    return "Showing cases submitted by your firm — yours and your teammates'. You can only add information to cases you personally submitted; the rest are view-only.";
+  if (scope === 'all-cases')
+    return "Showing every case across the firm and its clients. Admin view. You can only add information to cases you personally submitted; the rest are view-only.";
+  return '';
+}
+function updateScopeHint(){
+  const el = document.getElementById('scope-hint-text');
+  if (el) el.textContent = scopeHintText(accountsFilter);
+}
+
+// "Closed" tile and table both use a fixed 30-day window for closed cases.
+// Older closed cases live in a separate archive (out of scope for the queue).
+const CLOSED_WINDOW_DAYS = 30;
+function isClosedInWindow(c){
+  if (c.status !== 'decision-reached') return false;
+  return daysBetween(c.updated, TODAY_ANCHOR_MS) <= CLOSED_WINDOW_DAYS;
+}
+// A case is in the queue if it's open OR it was closed in the last 30 days.
+function inQueue(c){
+  return c.status !== 'decision-reached' || isClosedInWindow(c);
+}
+
+function filtered(){
+  let r = ALL_CASES.filter(c=>{
+    const cq  = caseQ.trim().toLowerCase();
+    const clq = clientQ.trim().toLowerCase();
+    const sq  = submitterQ.trim().toLowerCase();
+    return inAccountsScope(c)
+        && inQueue(c)
+        && (!cq  || c.id.includes(cq) || c.title.toLowerCase().includes(cq))
+        && (!clq || c.client.toLowerCase().includes(clq))
+        && (!sq  || (c.submittedBy||'').toLowerCase().includes(sq))
+        && (statusF==='all'  || displayStatus(c)===statusF)
+        && (productF==='all' || c.product===productF);
+  });
+  r.sort((a,b)=>{
+    let va, vb;
+    if (sortKey === 'opened') { va = new Date(a.opened).getTime();  vb = new Date(b.opened).getTime(); }
+    else if (sortKey === 'days')  { va = daysOutstanding(a);              vb = daysOutstanding(b); }
+    else                           { va = new Date(a.updated).getTime(); vb = new Date(b.updated).getTime(); }
+    return sortDir === 'desc' ? vb - va : va - vb;
+  });
+  return r;
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  clearTimeout(toastTimer);
+  t.classList.add('visible');
+  toastTimer = setTimeout(()=>t.classList.remove('visible'), 3200);
+}
+
+// ─── RENDER CASE LIST ─────────────────────────────────────────────────────────
+function render(){
+  const rows  = filtered();
+  const totalRows = rows.length;
+  const pageCount = Math.max(1, Math.ceil(totalRows / rowsPerPage));
+  if (pageIndex >= pageCount) pageIndex = pageCount - 1;
+  if (pageIndex < 0) pageIndex = 0;
+  const startIdx = pageIndex * rowsPerPage;
+  const endIdx   = Math.min(startIdx + rowsPerPage, totalRows);
+  const slice = rows.slice(startIdx, endIdx);
+  const body  = document.getElementById('case-body');
+  const foot  = document.getElementById('footer-text');
+
+  if(slice.length===0){
+    body.innerHTML = `<div class="empty-state" role="status">
+      <div class="empty-state-icon" aria-hidden="true">🔍</div>
+      <div class="empty-state-title">No cases found</div>
+      <div class="empty-state-desc">Try adjusting your search or filter criteria.</div>
+    </div>`;
+  } else {
+    body.innerHTML = slice.map(c=>{
+      // Accountants can only update or close cases they personally submitted.
+      // For every other case in their view, the only action is View Details.
+      // Update permission depends on the active Accounts scope:
+      //  • My cases       → I can act on anything visible here.
+      //  • Firm cases     → only cases I personally submitted; teammate-submitted
+      //                     cases are View Details only.
+      //  • All cases      → same restriction as Firm cases.
+      const canUpdate = (accountsFilter === 'my-cases')
+        ? true
+        : c.submittedByMe === true;
+
+      // IDS DataGrid action pattern: one primary action button (View details)
+      // with a dropdown chevron flush beside it for additional actions.
+      // For non-owners (canUpdate === false), only the primary button shows —
+      // there are no additional actions available to them.
+      const chevronIcon = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>`;
+      let actionsHtml;
+      if (!canUpdate) {
+        // View details only, rendered as a single-segment split (no dropdown)
+        actionsHtml = `<div class="action-split">
+          <button class="action-split-primary" data-action="view" data-id="${esc(c.id)}">View details</button>
+        </div>`;
+      } else {
+        const dropdownItemHtml = (c.status === 'decision-reached')
+          ? `<button class="action-menu-item" role="menuitem" data-action="reopen" data-id="${esc(c.id)}">Reopen case</button>`
+          : `<button class="action-menu-item" role="menuitem" data-action="add-info-from-menu" data-id="${esc(c.id)}">Add information</button>`;
+        actionsHtml = `<div class="action-split">
+          <button class="action-split-primary" data-action="view" data-id="${esc(c.id)}">View details</button>
+          <button class="action-split-trigger" data-action="menu-toggle" data-id="${esc(c.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="More actions">${chevronIcon}</button>
+        </div>
+        <div class="action-menu" id="action-menu-${esc(c.id)}" role="menu" hidden>
+          ${dropdownItemHtml}
+        </div>`;
+      }
+
+      // Inline Add Information and Reopen panels were removed — these actions
+      // now happen exclusively inside the right-side Case Details drawer (which
+      // matches IDS DataGrid's "actions tucked into a dropdown" pattern and
+      // avoids the inline row-expansion question we have open with the IDS team).
+      const addInfoPanel = '';
+      const reopenPanel  = '';
+
+      const originBadge = c.origin === 'firm'
+        ? `<span class="origin-badge origin-firm" title="Opened by firm">Firm</span>`
+        : `<span class="origin-badge origin-client" title="Opened by client">Client</span>`;
+      const days = daysOutstanding(c);
+      const daysClass = days >= 14 ? ' urgent' : (days >= 7 ? ' warn' : '');
+      const updatedFmt = fmtUpdatedWithTime(c.updated, c);
+      return `
+        <div class="case-row" role="row" id="case-row-${esc(c.id)}">
+          <div role="cell" class="dg-td-checkbox"><span class="dg-checkbox" aria-hidden="true"></span></div>
+          <div role="cell" class="client-cell">
+            <span class="client-name">${esc(c.client)}</span>
+            <span class="client-id">Client ID ${esc(clientId(c.client))}</span>
+          </div>
+          <div role="cell" class="product-cell"><span class="product-chip">${esc(c.product || 'Other')}</span></div>
+          <div role="cell">
+            <div class="case-title">${esc(c.title)}</div>
+            <div class="case-number">Case #${esc(c.id)}</div>
+          </div>
+          <div role="cell"><span class="status-badge ${esc(displayStatus(c))}">${statusLabel(displayStatus(c))}</span></div>
+          <div role="cell" class="submitter-cell">
+            <div class="submitter-name">${esc(c.submittedBy || '—')}</div>
+            ${originBadge}
+          </div>
+          <div role="cell" class="date-opened-cell">${fmtDate(c.opened)}</div>
+          <div role="cell" class="last-updated-cell">
+            <span>${updatedFmt.date}</span>
+            ${updatedFmt.time ? `<span class="date-time-sub">${esc(updatedFmt.time)}</span>` : ''}
+          </div>
+          <div role="cell" class="days-out-cell"><span class="days-out-chip${daysClass}" aria-label="${days} days outstanding">${days}d</span></div>
+          <div role="cell" class="actions-cell">${actionsHtml}</div>
+        </div>
+        ${addInfoPanel}
+        ${reopenPanel}`;
+    }).join('');
+
+    // (Inline panel char-counters removed — those inputs now live exclusively
+    // in the drawer, where their listeners are wired by wireDetailsButtons.)
+  }
+
+  // Scope total reflects what's visible in the queue (open cases + closed in
+  // the last 30 days), so the footer "Showing X of Y" matches the tiles.
+  const scopeTotal = ALL_CASES.filter(c => inAccountsScope(c) && inQueue(c)).length;
+  const matchCount = rows.length;
+  const scopeTitle = { 'my-cases': "My cases", 'firm-cases': "Firm cases", 'all-cases': "All cases" }[accountsFilter] || '';
+  const isFiltered = caseQ||clientQ||submitterQ||statusF!=='all'||productF!=='all';
+  foot.textContent = isFiltered
+    ? `Showing ${matchCount} matching case${matchCount!==1?'s':''} — within ${scopeTitle}`
+    : `Showing all ${scopeTotal} cases — filtered by: ${scopeTitle}`;
+
+  // Pagination controls
+  const range = document.getElementById('pagination-range');
+  const first = document.getElementById('page-first');
+  const prev  = document.getElementById('page-prev');
+  const next  = document.getElementById('page-next');
+  const last  = document.getElementById('page-last');
+  if (range) {
+    range.textContent = totalRows === 0
+      ? '0 of 0'
+      : `${startIdx + 1}–${endIdx} of ${totalRows}`;
+  }
+  if (first) first.disabled = (pageIndex === 0);
+  if (prev)  prev.disabled  = (pageIndex === 0);
+  if (next)  next.disabled  = (pageIndex >= pageCount - 1);
+  if (last)  last.disabled  = (pageIndex >= pageCount - 1);
+}
+
+// ─── CASE LIST ACTION DELEGATION ─────────────────────────────────────────────
+// IDS DataGrid action pattern: primary "View details" button + chevron-triggered
+// dropdown for additional actions. All write actions (Add information, Reopen)
+// now happen inside the right-side Case Details drawer; the dropdown items just
+// open the drawer with the appropriate section pre-expanded.
+let openMenuId = null;
+
+function closeAnyOpenMenu(){
+  if (!openMenuId) return;
+  const m = document.getElementById(`action-menu-${openMenuId}`);
+  if (m) m.setAttribute('hidden', '');
+  const t = document.querySelector(`[data-action="menu-toggle"][data-id="${openMenuId}"]`);
+  if (t) t.setAttribute('aria-expanded', 'false');
+  openMenuId = null;
+}
+
+document.getElementById('case-body').addEventListener('click', e=>{
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  const id     = btn.dataset.id;
+  const c = ALL_CASES.find(x=>x.id===id);
+  if(!c) return;
+
+  if(action === 'view'){
+    closeAnyOpenMenu();
+    openDetailsPanel(c);
+  }
+
+  if(action === 'menu-toggle'){
+    e.stopPropagation();
+    if (openMenuId === id) {
+      closeAnyOpenMenu();
+    } else {
+      closeAnyOpenMenu();
+      const m = document.getElementById(`action-menu-${id}`);
+      if (m) { m.removeAttribute('hidden'); btn.setAttribute('aria-expanded', 'true'); openMenuId = id; }
+    }
+  }
+
+  if(action === 'add-info-from-menu'){
+    closeAnyOpenMenu();
+    // Open the drawer and tell it to auto-expand the Add Information section.
+    openDetailsPanel(c, { autoOpenAddInfo: true });
+  }
+
+  if(action === 'reopen'){
+    closeAnyOpenMenu();
+    // Open the drawer and auto-expand the Reopen reason section.
+    openDetailsPanel(c, { autoOpenReopen: true });
+  }
+});
+
+// Clicking anywhere outside an open menu closes it.
+document.addEventListener('click', (e) => {
+  if (!openMenuId) return;
+  const inMenu   = e.target.closest(`#action-menu-${openMenuId}`);
+  const onToggle = e.target.closest(`[data-action="menu-toggle"][data-id="${openMenuId}"]`);
+  if (!inMenu && !onToggle) closeAnyOpenMenu();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAnyOpenMenu(); });
+
+// ─── PAGINATION CONTROLS ─────────────────────────────────────────────────────
+document.getElementById('rows-per-page').addEventListener('change', e=>{
+  rowsPerPage = parseInt(e.target.value, 10) || PAGE_SIZE;
+  pageIndex = 0;
+  render();
+});
+document.getElementById('page-first').addEventListener('click', ()=>{ pageIndex = 0; render(); });
+document.getElementById('page-prev').addEventListener('click',  ()=>{ pageIndex = Math.max(0, pageIndex - 1); render(); });
+document.getElementById('page-next').addEventListener('click',  ()=>{ pageIndex = pageIndex + 1; render(); });
+document.getElementById('page-last').addEventListener('click',  ()=>{
+  const totalRows = filtered().length;
+  pageIndex = Math.max(0, Math.ceil(totalRows / rowsPerPage) - 1);
+  render();
+});
+
+// ─── TYPEAHEAD FACTORY ────────────────────────────────────────────────────────
+function makeTypeahead({ inputId, dropdownId, getSuggestions, renderItem, onSelect, onQueryChange }){
+  const input = document.getElementById(inputId);
+  const list  = document.getElementById(dropdownId);
+
+  function showList(items, query){
+    if(!query.trim() || items.length===0){
+      if(query.trim() && items.length===0){
+        list.innerHTML = '<div class="typeahead-empty">No results found</div>';
+        list.removeAttribute('hidden');
+        input.setAttribute('aria-expanded','true');
+      } else { closeList(); }
+      return;
+    }
+    list.innerHTML = items.map(item => renderItem(item, query)).join('');
+    list.removeAttribute('hidden');
+    input.setAttribute('aria-expanded','true');
+    list.querySelectorAll('.typeahead-item').forEach(el=>{
+      el.addEventListener('mousedown', ev=>{
+        ev.preventDefault();
+        onSelect(el.dataset.value, el.dataset.label || el.dataset.value);
+        closeList();
+      });
+    });
+  }
+
+  function closeList(){ list.setAttribute('hidden',''); input.setAttribute('aria-expanded','false'); }
+
+  input.addEventListener('input', e=>{
+    const q = e.target.value;
+    onQueryChange(q);
+    showList(getSuggestions(q), q);
+    pageIndex = 0;
+    render();
+  });
+  input.addEventListener('focus', ()=>{ if(input.value) showList(getSuggestions(input.value), input.value); });
+  input.addEventListener('blur',  ()=>{ setTimeout(closeList, 160); });
+  input.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeList(); input.blur(); } });
+}
+
+makeTypeahead({
+  inputId:'case-input', dropdownId:'case-suggestions',
+  getSuggestions: q => {
+    if(!q.trim()) return [];
+    const lq = q.trim().toLowerCase();
+    return ALL_CASES.filter(c=>c.id.includes(lq)||c.title.toLowerCase().includes(lq)).slice(0,7);
+  },
+  renderItem: (c,q) => `
+    <div class="typeahead-item" role="option" data-value="${esc(c.id)}" tabindex="-1">
+      <span class="typeahead-item-main">${hi(c.id,q)}</span>
+      <span class="typeahead-item-sub">${hi(c.title,q)} &middot; ${esc(c.client)}</span>
+    </div>`,
+  onSelect: val=>{ document.getElementById('case-input').value=val; caseQ=val; },
+  onQueryChange: q=>{ caseQ=q; }
+});
+
+makeTypeahead({
+  inputId:'client-input', dropdownId:'client-suggestions',
+  getSuggestions: q => {
+    if(!q.trim()) return [];
+    const lq = q.trim().toLowerCase();
+    return CLIENTS.filter(cl=>cl.toLowerCase().includes(lq)).slice(0,6);
+  },
+  renderItem: (cl,q) => `
+    <div class="typeahead-item" role="option" data-value="${esc(cl)}" tabindex="-1">
+      <span class="typeahead-item-main">${hi(cl,q)}</span>
+    </div>`,
+  onSelect: val=>{ document.getElementById('client-input').value=val; clientQ=val; },
+  onQueryChange: q=>{ clientQ=q; }
+});
+
+makeTypeahead({
+  inputId:'submitter-input', dropdownId:'submitter-suggestions',
+  getSuggestions: q => {
+    if(!q.trim()) return [];
+    const lq = q.trim().toLowerCase();
+    return SUBMITTERS.filter(s=>s.toLowerCase().includes(lq)).slice(0,6);
+  },
+  renderItem: (s,q) => `
+    <div class="typeahead-item" role="option" data-value="${esc(s)}" tabindex="-1">
+      <span class="typeahead-item-main">${hi(s,q)}</span>
+    </div>`,
+  onSelect: val=>{ document.getElementById('submitter-input').value=val; submitterQ=val; },
+  onQueryChange: q=>{ submitterQ=q; }
+});
+
+// ─── STATUS CARDS — live counts (always sum to queue total) ──────────────────
+function updateStatusCards(){
+  // Tiles count the same case set the queue table shows: everything in the
+  // current Accounts scope, restricted to open cases + closed-in-last-30-days.
+  // That guarantees the four tile counts sum to the case queue total — which
+  // testers explicitly called out.
+  const scoped = ALL_CASES.filter(c => inAccountsScope(c) && inQueue(c));
+  const needsFirm   = scoped.filter(c=>displayStatus(c)==='needs-attention').length;
+  const needsClient = scoped.filter(c=>displayStatus(c)==='waiting-client').length;
+  const ur          = scoped.filter(c=>displayStatus(c)==='under-review').length;
+  const closed      = scoped.filter(c=>c.status==='decision-reached').length;
+  document.getElementById('card-count-needs-attention').textContent  = needsFirm;
+  document.getElementById('card-count-waiting-client').textContent   = needsClient;
+  document.getElementById('card-count-under-review').textContent     = ur;
+  document.getElementById('card-count-decision-reached').textContent = closed;
+}
+
+// ─── STATUS DROPDOWN SYNC ────────────────────────────────────────────────────
+// Tiles are no longer interactive (per IDS canonical pattern, status filtering
+// is owned by the column-level Status filter dropdown). This function keeps the
+// dropdown label and check-state in sync with statusF.
+function syncStatusUiFromFilter(){
+  const ddLbl = document.getElementById('status-dd-label');
+  if (ddLbl) ddLbl.textContent = statusF === 'all' ? 'All' : statusLabel(statusF);
+  document.querySelectorAll('#status-dd-menu .sort-option').forEach(o=>{
+    const sel = o.dataset.status === statusF;
+    o.classList.toggle('selected', sel);
+    o.setAttribute('aria-selected', String(sel));
+    const checkEl = o.querySelector('.sort-check');
+    if (checkEl) checkEl.innerHTML = sel ? CHECK : '';
+  });
+}
+
+// ─── STATUS FILTER DROPDOWN (IDS-style custom) ────────────────────────────────
+const statusDdBtn  = document.getElementById('status-dd-btn');
+const statusDdMenu = document.getElementById('status-dd-menu');
+const statusDdLbl  = document.getElementById('status-dd-label');
+let statusDdOpen   = false;
+
+const STATUS_LABELS = { 'all':'All statuses', 'needs-attention':'Needs attention', 'waiting-client':'Waiting on client', 'under-review':'Under review', 'decision-reached':'Closed' };
+
+function closeStatusDd(){ statusDdMenu.setAttribute('hidden',''); statusDdBtn.setAttribute('aria-expanded','false'); statusDdOpen=false; }
+
+statusDdBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  statusDdOpen = !statusDdOpen;
+  if(statusDdOpen){ statusDdMenu.removeAttribute('hidden'); statusDdBtn.setAttribute('aria-expanded','true'); }
+  else closeStatusDd();
+});
+
+statusDdMenu.querySelectorAll('.sort-option').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    statusF = opt.dataset.status;
+    pageIndex = 0;
+    statusDdBtn.setAttribute('aria-label', `Filter by status: ${STATUS_LABELS[statusF] || statusLabel(statusF)}`);
+    syncStatusUiFromFilter();
+    closeStatusDd();
+    render();
+  });
+});
+
+document.addEventListener('click', e=>{
+  if(!document.getElementById('status-dropdown-wrap').contains(e.target)) closeStatusDd();
+});
+
+// ─── ICON CONSTANTS (shared by column sort + selected-check markers) ─────────
+const ARROW_UP   = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="13" x2="8" y2="3"/><polyline points="4 7 8 3 12 7"/></svg>`;
+const ARROW_DOWN = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="3" x2="8" y2="13"/><polyline points="4 9 8 13 12 9"/></svg>`;
+const ARROW_BOTH = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 6 8 3 11 6"/><polyline points="5 10 8 13 11 10"/></svg>`;
+const CHECK      = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#005056" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 7 12 13 4"/></svg>`;
+
+// ─── COLUMN SORT (Date opened / Last updated / Days out) ─────────────────────
+const SORT_BUTTONS = ['opened','updated','days'];
+function refreshSortIndicators(){
+  SORT_BUTTONS.forEach(key => {
+    const btn  = document.getElementById('sort-'+key);
+    const icon = document.getElementById('sort-'+key+'-icon');
+    if (!btn || !icon) return;
+    const active = (key === sortKey);
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-sort', active ? (sortDir === 'desc' ? 'descending' : 'ascending') : 'none');
+    icon.innerHTML = active ? (sortDir === 'desc' ? ARROW_DOWN : ARROW_UP) : ARROW_BOTH;
+  });
+}
+SORT_BUTTONS.forEach(key => {
+  const btn = document.getElementById('sort-'+key);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    if (sortKey === key) {
+      sortDir = (sortDir === 'desc') ? 'asc' : 'desc';
+    } else {
+      sortKey = key;
+      sortDir = 'desc';
+    }
+    pageIndex = 0;
+    refreshSortIndicators();
+    render();
+  });
+});
+
+// ─── PRODUCT FILTER DROPDOWN (column-aligned) ────────────────────────────────
+const productDdBtn  = document.getElementById('product-dd-btn');
+const productDdMenu = document.getElementById('product-dd-menu');
+const productDdLbl  = document.getElementById('product-dd-label');
+let productDdOpen = false;
+
+function buildProductMenu(){
+  const products = [...new Set(ALL_CASES.map(c => c.product).filter(Boolean))].sort();
+  const opts = [{ key: 'all', label: 'All products' }].concat(products.map(p => ({ key: p, label: p })));
+  productDdMenu.innerHTML = opts.map(o => `
+    <div class="sort-option${o.key === productF ? ' selected' : ''}" role="option" aria-selected="${o.key === productF}" data-product="${esc(o.key)}">
+      <span class="sort-check">${o.key === productF ? CHECK : ''}</span>${esc(o.label)}
+    </div>
+  `).join('');
+  productDdMenu.querySelectorAll('.sort-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      productF = opt.dataset.product;
+      pageIndex = 0;
+      productDdLbl.textContent = (productF === 'all') ? 'All' : productF;
+      productDdBtn.setAttribute('aria-label', `Filter by product: ${productF === 'all' ? 'All' : productF}`);
+      buildProductMenu();
+      closeProductDd();
+      render();
+    });
+  });
+}
+function closeProductDd(){ productDdMenu.setAttribute('hidden',''); productDdBtn.setAttribute('aria-expanded','false'); productDdOpen = false; }
+productDdBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  productDdOpen = !productDdOpen;
+  if (productDdOpen) { productDdMenu.removeAttribute('hidden'); productDdBtn.setAttribute('aria-expanded','true'); }
+  else closeProductDd();
+});
+document.addEventListener('click', e => {
+  if (!document.getElementById('product-dropdown-wrap').contains(e.target)) closeProductDd();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProductDd(); });
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-item').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-item').forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); t.setAttribute('tabindex','-1'); });
+    tab.classList.add('active'); tab.setAttribute('aria-selected','true'); tab.setAttribute('tabindex','0');
+  });
+});
+
+// ─── CASE DETAILS PANEL ───────────────────────────────────────────────────────
+let currentDetailCase  = null;
+let detailsAddInfoOpen = false;
+let detailsReopenOpen  = false;
+
+function statusIconSvg(status){
+  if(status==='needs-attention')
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-status-error)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  if(status==='under-review')
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-status-warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-status-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
+}
+
+function renderDetailsBody(c){
+  detailsAddInfoOpen = false;
+  detailsReopenOpen  = false;
+
+  let actionBtns = '';
+  if(c.status === 'decision-reached'){
+    actionBtns = `
+      <button class="btn btn-ghost"    id="d-add-info-btn">Add information</button>
+      <button class="btn btn-primary"  id="d-reopen-btn">Reopen</button>`;
+  } else {
+    actionBtns = `<button class="btn btn-primary" id="d-add-info-btn">Add information</button>`;
+  }
+
+  const emailsHtml = c.emails && c.emails.length > 0
+    ? c.emails.map((em, idx)=>`
+        <div class="email-item" id="details-email-${idx}">
+          <div class="email-item-sender">Sender: <strong>${esc(em.sender)}</strong></div>
+          <div class="email-item-date">${esc(em.date)}</div>
+          <div class="email-item-subject">Subject: ${esc(em.subject)}</div>
+          ${em.greeting ? `<div class="email-item-greeting">${esc(em.greeting)}</div>` : ''}
+          <div class="email-item-body">${esc(em.body.length > 180 ? em.body.slice(0,180)+'…' : em.body)}</div>
+          ${em.signature ? `<div class="email-item-signature">${esc(em.signature).replace(/\n/g,'<br>')}</div>` : ''}
+          <div style="margin-top:var(--size-2)">
+            <button class="btn btn-ghost" style="font-size:12px;height:28px;" data-expand-idx="${idx}">
+              Expand message
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 6 8 10 12 6"/></svg>
+            </button>
+          </div>
+        </div>`).join('')
+    : `<div style="padding:var(--size-5);text-align:center;color:var(--color-text-secondary);font-size:13px;">No email history yet.</div>`;
+
+  const emailCount = c.emails ? c.emails.length : 0;
+  const paginationCount = Math.ceil((emailCount||1) / 2);
+  const paginationHtml = paginationCount > 1
+    ? Array.from({length:Math.min(paginationCount,5)},(_,i)=>`<button class="pagination-btn${i===0?' active':''}">${i+1}</button>`).join('')
+    : '';
+
+  // Build expanded-email overlays (one per email)
+  const expandedOverlays = c.emails && c.emails.length > 0
+    ? c.emails.map((em, idx)=>`
+        <div class="email-expanded-view" id="email-expanded-${idx}">
+          <div class="email-expanded-header">
+            <button class="email-expanded-back" data-collapse-idx="${idx}">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="10 4 6 8 10 12"/></svg>
+              Back to thread
+            </button>
+            <span class="email-expanded-subject">${esc(em.subject)}</span>
+          </div>
+          <div class="email-expanded-body">
+            <div class="email-item-sender" style="margin-bottom:2px">Sender: <strong>${esc(em.sender)}</strong></div>
+            <div class="email-item-date" style="margin-bottom:var(--size-4)">${esc(em.date)}</div>
+            ${em.greeting ? `<div class="email-item-greeting">${esc(em.greeting)}</div>` : ''}
+            <div class="email-item-body">${esc(em.body)}</div>
+            ${em.signature ? `<div class="email-item-signature">${esc(em.signature).replace(/\n/g,'<br>')}</div>` : ''}
+          </div>
+        </div>`).join('')
+    : '';
+
+  return `
+    ${expandedOverlays}
+
+    <div class="details-case-title" id="details-title">${esc(c.title)}</div>
+    <div class="details-meta">
+      <div class="details-case-number">Case number <strong>${esc(c.id)}</strong></div>
+      <div class="details-status-row">
+        <span class="details-status-icon">${statusIconSvg(c.status)}</span>
+        <span>${esc(statusLabel(displayStatus(c)))}</span>
+      </div>
+      <div class="details-updated">Status last updated ${fmtDate(c.updated)} at 10:05 AM PST</div>
+      <div class="details-expert-note">${esc(c.expertNote)}</div>
+    </div>
+
+    <div class="details-actions">
+      ${actionBtns}
+    </div>
+
+    <!-- Reopen reason section -->
+    <div class="details-reopen-section" id="details-reopen-section">
+      <div>
+        <div class="add-info-label">Reason for reopening Case ${esc(c.id)}</div>
+        <div class="add-info-sublabel">Please explain why this case needs to be reopened. This will be shared with the assigned expert.</div>
+      </div>
+      <textarea class="add-info-textarea" id="details-reopen-ta" placeholder="Describe why this case needs to be reopened..." maxlength="2000" rows="4" aria-label="Reason for reopening"></textarea>
+      <div class="add-info-char-count" id="details-reopen-cc">0 / 2000</div>
+      <div class="add-info-actions">
+        <button class="btn btn-ghost" id="details-cancel-reopen-btn">Cancel</button>
+        <button class="btn btn-primary" id="details-confirm-reopen-btn">Reopen case</button>
+      </div>
+    </div>
+
+    <!-- Add-info section -->
+    <div class="details-add-info-section" id="details-add-info-section">
+      <div>
+        <div class="add-info-label">Add information to Case ${esc(c.id)}</div>
+        <div class="add-info-sublabel">Provide additional context for the expert.${c.status==='needs-attention' ? ' Submitting will update the status to <strong>Under review</strong>.' : ''}</div>
+      </div>
+      <textarea class="add-info-textarea" id="details-add-info-ta" placeholder="Describe the issue or share any relevant details..." maxlength="2000" rows="4" aria-label="Additional information"></textarea>
+      <div class="add-info-char-count" id="details-add-info-cc">0 / 2000</div>
+      <div class="add-info-actions">
+        <button class="btn btn-ghost" id="details-cancel-info-btn">Cancel</button>
+        <button class="btn btn-primary" id="details-submit-info-btn">Submit</button>
+      </div>
+    </div>
+
+    <div class="details-section-divider">
+      <div class="details-section-divider-line"></div>
+      <div class="details-section-divider-label">Historical Communications</div>
+      <div class="details-section-divider-line"></div>
+    </div>
+
+    <div class="email-message">
+      <div class="email-message-header">
+        <div class="email-thread-label">Email Thread</div>
+        <div class="email-inbox-label">Inbox</div>
+        <div class="email-all-label">All Emails</div>
+      </div>
+      ${emailsHtml}
+      ${paginationHtml ? `
+        <div class="email-pagination">
+          <span>1–2 of ${emailCount} items</span>
+          <div class="pagination-btns">
+            <button class="pagination-nav" aria-label="Previous page">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="10 4 6 8 10 12"/></svg>
+            </button>
+            ${paginationHtml}
+            <button class="pagination-nav" aria-label="Next page">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 4 10 8 6 12"/></svg>
+            </button>
+          </div>
+        </div>` : ''}
+    </div>`;
+}
+
+function wireDetailsButtons(c){
+  const detailsBody = document.getElementById('details-body');
+
+  // ── Add-info textarea / char counter
+  const aiTa = document.getElementById('details-add-info-ta');
+  const aiCc = document.getElementById('details-add-info-cc');
+  if(aiTa && aiCc) aiTa.addEventListener('input',()=>{ aiCc.textContent=`${aiTa.value.length} / 2000`; });
+
+  // ── Reopen textarea / char counter
+  const roTa = document.getElementById('details-reopen-ta');
+  const roCc = document.getElementById('details-reopen-cc');
+  if(roTa && roCc) roTa.addEventListener('input',()=>{ roCc.textContent=`${roTa.value.length} / 2000`; });
+
+  // ── Add information toggle
+  const addInfoBtn = document.getElementById('d-add-info-btn');
+  if(addInfoBtn){
+    addInfoBtn.addEventListener('click',()=>{
+      detailsAddInfoOpen = !detailsAddInfoOpen;
+      if(detailsAddInfoOpen){ detailsReopenOpen = false; document.getElementById('details-reopen-section').classList.remove('open'); }
+      document.getElementById('details-add-info-section').classList.toggle('open', detailsAddInfoOpen);
+      if(detailsAddInfoOpen && aiTa) aiTa.focus();
+    });
+  }
+
+  // ── Cancel add-info
+  const cancelInfoBtn = document.getElementById('details-cancel-info-btn');
+  if(cancelInfoBtn){
+    cancelInfoBtn.addEventListener('click',()=>{
+      detailsAddInfoOpen = false;
+      document.getElementById('details-add-info-section').classList.remove('open');
+      if(aiTa){ aiTa.value=''; }
+      if(aiCc) aiCc.textContent='0 / 2000';
+    });
+  }
+
+  // ── Submit add-info
+  const submitInfoBtn = document.getElementById('details-submit-info-btn');
+  if(submitInfoBtn){
+    submitInfoBtn.addEventListener('click',()=>{
+      const text = aiTa ? aiTa.value.trim() : '';
+      if(!text){ if(aiTa){ aiTa.focus(); aiTa.style.borderColor='var(--color-status-error)'; } return; }
+      if(c.status === 'needs-attention'){ c.status='under-review'; c.statusNote='Under review'; }
+      c.updated = new Date().toISOString().slice(0,10);
+      c.expertNote = 'An expert will be assigned to your case soon.';
+      if(c.emails) c.emails.unshift({ sender:'You', date:new Date().toLocaleString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}), subject:'Additional information submitted', greeting:null, body:text, signature:null });
+      currentDetailCase = c;
+      detailsBody.innerHTML = renderDetailsBody(c);
+      wireDetailsButtons(c);
+      updateStatusCards();
+      render();
+      showToast('Information submitted — case is now Under review');
+    });
+  }
+
+  // ── Reopen button — show reason section
+  const reopenBtn = document.getElementById('d-reopen-btn');
+  if(reopenBtn){
+    reopenBtn.addEventListener('click',()=>{
+      detailsReopenOpen = !detailsReopenOpen;
+      if(detailsReopenOpen){ detailsAddInfoOpen=false; document.getElementById('details-add-info-section').classList.remove('open'); }
+      document.getElementById('details-reopen-section').classList.toggle('open', detailsReopenOpen);
+      if(detailsReopenOpen && roTa) roTa.focus();
+    });
+  }
+
+  // ── Cancel reopen
+  const cancelReopenBtn = document.getElementById('details-cancel-reopen-btn');
+  if(cancelReopenBtn){
+    cancelReopenBtn.addEventListener('click',()=>{
+      detailsReopenOpen = false;
+      document.getElementById('details-reopen-section').classList.remove('open');
+      if(roTa){ roTa.value=''; }
+      if(roCc) roCc.textContent='0 / 2000';
+    });
+  }
+
+  // ── Confirm reopen
+  const confirmReopenBtn = document.getElementById('details-confirm-reopen-btn');
+  if(confirmReopenBtn){
+    confirmReopenBtn.addEventListener('click',()=>{
+      const text = roTa ? roTa.value.trim() : '';
+      if(!text){ if(roTa){ roTa.focus(); roTa.style.borderColor='var(--color-status-error)'; } return; }
+      c.status = 'under-review';
+      c.updated = new Date().toISOString().slice(0,10);
+      c.statusNote = 'Case reopened';
+      c.expertNote = 'An expert will be assigned to your case soon.';
+      if(c.emails) c.emails.unshift({ sender:'You', date:new Date().toLocaleString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}), subject:'Case reopen request', greeting:null, body:text, signature:null });
+      currentDetailCase = c;
+      detailsBody.innerHTML = renderDetailsBody(c);
+      wireDetailsButtons(c);
+      updateStatusCards();
+      render();
+      showToast('Case reopened — status is now Under review');
+    });
+  }
+
+  // ── Expand message buttons (show full email overlay)
+  detailsBody.querySelectorAll('[data-expand-idx]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx = btn.dataset.expandIdx;
+      const overlay = document.getElementById(`email-expanded-${idx}`);
+      if(overlay) overlay.classList.add('open');
+    });
+  });
+
+  // ── Back-to-thread buttons inside expanded overlays
+  detailsBody.querySelectorAll('[data-collapse-idx]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx = btn.dataset.collapseIdx;
+      const overlay = document.getElementById(`email-expanded-${idx}`);
+      if(overlay) overlay.classList.remove('open');
+    });
+  });
+}
+
+function openDetailsPanel(c, options = {}){
+  currentDetailCase = c;
+  detailsAddInfoOpen = false;
+  detailsReopenOpen  = false;
+  const body    = document.getElementById('details-body');
+  const backdrop = document.getElementById('overlay-backdrop');
+  body.innerHTML = renderDetailsBody(c);
+  wireDetailsButtons(c);
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // If the caller asked for a specific section to be pre-expanded (because the
+  // user picked Add information or Reopen from the row's action dropdown),
+  // open that section and focus its textarea. Otherwise, focus the first
+  // focusable element in the panel as before.
+  setTimeout(() => {
+    if (options.autoOpenAddInfo) {
+      detailsAddInfoOpen = true;
+      const sec = document.getElementById('details-add-info-section');
+      if (sec) sec.classList.add('open');
+      const ta = document.getElementById('details-add-info-ta');
+      if (ta) ta.focus();
+      return;
+    }
+    if (options.autoOpenReopen) {
+      detailsReopenOpen = true;
+      const sec = document.getElementById('details-reopen-section');
+      if (sec) sec.classList.add('open');
+      const ta = document.getElementById('details-reopen-ta');
+      if (ta) ta.focus();
+      return;
+    }
+    const first = document.getElementById('case-details-panel').querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (first) first.focus();
+  }, 50);
+}
+
+function closeDetailsPanel(){
+  document.getElementById('overlay-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  currentDetailCase = null;
+  detailsAddInfoOpen = false;
+}
+
+document.getElementById('details-close-btn').addEventListener('click', closeDetailsPanel);
+document.getElementById('details-back-btn').addEventListener('click', closeDetailsPanel);
+document.getElementById('overlay-backdrop').addEventListener('click', e=>{
+  if(e.target === document.getElementById('overlay-backdrop')) closeDetailsPanel();
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape' && document.getElementById('overlay-backdrop').classList.contains('open')) closeDetailsPanel();
+});
+
+// ─── ACCOUNTS DROPDOWN ───────────────────────────────────────────────────────
+const accountsDdBtn  = document.getElementById('accounts-dd-btn');
+const accountsDdMenu = document.getElementById('accounts-dd-menu');
+const accountsDdLbl  = document.getElementById('accounts-dd-label');
+let accountsDdOpen   = false;
+// accountsFilter is declared up in the STATE block.
+
+const MY_CLIENT_IDS = new Set(ALL_CASES.filter(c=>
+  ['Arryn Granaries','Dorne LLC','Lannister Corp',"King's Landing Inc","Baratheon & Co.","House Baratheon of Storm's End"].includes(c.client)
+).map(c=>c.id));
+
+function closeAccountsDd(){ accountsDdMenu.setAttribute('hidden',''); accountsDdBtn.setAttribute('aria-expanded','false'); accountsDdOpen=false; }
+
+accountsDdBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  accountsDdOpen = !accountsDdOpen;
+  if(accountsDdOpen){ accountsDdMenu.removeAttribute('hidden'); accountsDdBtn.setAttribute('aria-expanded','true'); }
+  else closeAccountsDd();
+});
+
+accountsDdMenu.querySelectorAll('.accounts-option').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    accountsFilter = opt.dataset.acct;
+    accountsDdLbl.textContent = accountLabel(accountsFilter);
+    accountsDdMenu.querySelectorAll('.accounts-option').forEach(o=>{
+      const sel = o.dataset.acct === accountsFilter;
+      o.classList.toggle('selected', sel);
+      o.setAttribute('aria-selected', String(sel));
+      const checkEl = o.querySelector('.accounts-option-check');
+      if (checkEl) checkEl.innerHTML = sel ? CHECK : '';
+    });
+    pageIndex = 0;
+    closeAccountsDd();
+    updateStatusCards();
+    updateScopeHint();
+    render();
+  });
+});
+
+document.addEventListener('click', e=>{
+  if(!document.getElementById('accounts-dd-wrap').contains(e.target)) closeAccountsDd();
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+// Set the initial Accounts dropdown label from real data counts.
+accountsDdLbl.textContent = accountLabel(accountsFilter);
+syncStatusUiFromFilter();
+buildProductMenu();
+refreshSortIndicators();
+updateStatusCards();
+updateScopeHint();
+render();
+</script>
+</body>
+</html>
